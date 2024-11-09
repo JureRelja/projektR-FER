@@ -4,8 +4,8 @@ import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 // Import pages
-import Home from "./pages/home/Index.tsx";
-import Room from "./pages/room/Index.tsx";
+import Home from "./pages/Home";
+import Room from "./pages/Room/index.tsx";
 
 // Layouts
 import AppLayout from "./layout/AppLayout.tsx";

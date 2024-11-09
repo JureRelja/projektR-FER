@@ -1,30 +1,46 @@
 import { useState } from "react";
-import reactLogo from "../../assets/react.svg";
-import viteLogo from "../../../public/vite.svg";
-import "./App.css";
+import Button from "../../components/Button";
+import Divider from "../../components/Divider";
 
 function App() {
-    const [count, setCount] = useState(0);
+    //Create new room - start
+    const roomCreateHandler = (): void => {};
+
+    //Create new room - end
+
+    //Join existing room - start
+    const [roomCode, setRoomCode] = useState<string>("");
+
+    const roomCodeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        setRoomCode(e.target.value);
+    };
+
+    const roomJoinHandler = (): void => {};
+    //Join existing room - end
 
     return (
-        <>
-            <div>
-                <a href="https://vite.dev" target="_blank">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank">
-                    <img src={reactLogo} className="logo react" alt="React logo" />
-                </a>
+        <div className="flex flex-col gap-12 w-full">
+            <div className="flex flex-col gap-5 justify-center items-center">
+                <h2 className="text-2xl text-center">Započni novi poziv</h2>
+                <Button label="Novi poziv" onClick={roomCreateHandler} />
             </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>count is {count}</button>
-                <p>
-                    Edit <code>src/App.tsx</code> and save to test HMR
-                </p>
+
+            <Divider />
+
+            <div className="flex flex-col gap-5 justify-center">
+                <h2 className="text-2xl text-center">Pridruži se postojećem pozivu</h2>
+                <input
+                    className="border-2 rounded-sm px-3 py-2 border-gray-400"
+                    type="text"
+                    value={roomCode}
+                    placeholder="Unesite kod poziva, npr. f20jf04j043f0344fj0"
+                    onChange={roomCodeHandler}
+                />
+                <div className="flex flex-col justify-end items-center">
+                    <Button label="Pridruži se " onClick={roomJoinHandler} />
+                </div>
             </div>
-            <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
-        </>
+        </div>
     );
 }
 

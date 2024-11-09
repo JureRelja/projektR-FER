@@ -17,9 +17,23 @@ module.exports = {
   },
   ignorePatterns: ['.eslintrc.js'],
   rules: {
-    '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/explicit-function-return-type': 2,
+    '@typescript-eslint/explicit-module-boundary-types': 2,
+    '@typescript-eslint/no-explicit-any': 2,
+
+    //prettier-ignore
+    "@typescript-eslint/typedef": [
+      "error",
+      {
+        "arrowParameter": true,
+        "variableDeclaration": true,
+        "arrayDestructuring": true,
+        "objectDestructuring" : true,
+        "memberVariableDeclaration": true,
+        "parameter": true,
+        "propertyDeclaration": true,
+        "variableDeclaration": true
+      }
+    ],
   },
 };

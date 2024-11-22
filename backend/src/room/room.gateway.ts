@@ -1,30 +1,18 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody } from "@nestjs/websockets";
 import { RoomService } from "./room.service";
-import { CreateRoomDto } from "./dto/CreateRoom";
-import { UpdateRoomDto } from "./dto/UpdateRoom";
 
 @WebSocketGateway()
 export class RoomGateway {
     constructor(private readonly roomService: RoomService) {}
 
     @SubscribeMessage("createRoom")
-    create(@MessageBody() createRoomDto: CreateRoomDto) {
-        return this.roomService.create(createRoomDto);
+    createRoom(): Promise<number> {
+        return this.roomService.createRoom();
     }
 
-    @SubscribeMessage("findAllRoom")
-    findAll() {
-        return this.roomService.findAll();
-    }
-
-    @SubscribeMessage("findOneRoom")
-    findOne(@MessageBody() id: number) {
-        return this.roomService.findOne(id);
-    }
-
-    @SubscribeMessage("updateRoom")
-    update(@MessageBody() updateRoomDto: UpdateRoomDto) {
-        return this.roomService.update(updateRoomDto.id, updateRoomDto);
+    @SubscribeMessage("joinRoom")
+    joinRoom(@MessageBody() id: number): Promise<void> {
+        return this.roomService.joinRoom(id);
     }
 
     @SubscribeMessage("removeRoom")

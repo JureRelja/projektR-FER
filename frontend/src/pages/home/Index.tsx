@@ -1,11 +1,20 @@
 import { useState } from "react";
 import Button from "../../components/Button";
 import Divider from "../../components/Divider";
+import { socket } from "../../socket.io.client";
+import { useNavigate } from "react-router-dom";
 
 function App() {
-    //Create new room - start
-    const roomCreateHandler = (): void => {};
+    const navigate = useNavigate();
 
+    //Create new room - start
+    const roomCreateHandler = async (): Promise<void> => {
+        const newSocket = socket.connect();
+
+        socket.emit("createRoom", { name: "Jure" }, (roomId: number) => {
+            navigate(`/room/${roomId}`);
+        });
+    };
     //Create new room - end
 
     //Join existing room - start
@@ -15,7 +24,15 @@ function App() {
         setRoomCode(e.target.value);
     };
 
-    const roomJoinHandler = (): void => {};
+    const roomJoinHandler = (): void => {
+        const newSocket = socket.connect();
+
+        socket.emit("joinRoom", { roomId: roomCode }, (success: boolean) => {
+            if (success) {
+                navigate(`/room/${roomCode}`);
+            }
+        });
+    };
     //Join existing room - end
 
     return (

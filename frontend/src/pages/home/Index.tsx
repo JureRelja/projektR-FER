@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../../components/Button";
 import Divider from "../../components/Divider";
-import { socket } from "../../socket.io.client";
+import { socket } from "../../websocket/socket";
 import { useNavigate } from "react-router-dom";
 
 function App() {
@@ -9,9 +9,8 @@ function App() {
 
     //Create new room - start
     const roomCreateHandler = async (): Promise<void> => {
-        const newSocket = socket.connect();
-
         socket.emit("createRoom", (roomId: number) => {
+            console.log("Room created with id: ", roomId);
             navigate(`/room/${roomId}`);
         });
     };
@@ -25,7 +24,7 @@ function App() {
     };
 
     const roomJoinHandler = (): void => {
-        const newSocket = socket.connect();
+        socket.connect();
 
         socket.emit("joinRoom", { roomId: roomCode }, (success: boolean) => {
             if (success) {

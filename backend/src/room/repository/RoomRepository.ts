@@ -32,4 +32,14 @@ export class RoomRepository {
 
         return newParticipant;
     }
+
+    public async getParticipants(roomId: number): Promise<Participant[]> {
+        const participants: Participant[] = await db.participant.findMany({
+            where: {
+                roomId: roomId,
+            },
+        });
+
+        return participants;
+    }
 }

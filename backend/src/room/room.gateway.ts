@@ -22,6 +22,8 @@ export class RoomGateway {
 
         await client.join(id.toString());
 
+        client.emit("roomData", this.roomService.getParticipants(id));
+
         console.log("Client" + client.id + " joined room: " + id);
     }
 }

@@ -2,7 +2,7 @@ import { WebSocketGateway, SubscribeMessage, MessageBody, ConnectedSocket } from
 import { RoomService } from "./room.service";
 import { Socket } from "socket.io";
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class RoomGateway {
     constructor(private readonly roomService: RoomService) {}
 

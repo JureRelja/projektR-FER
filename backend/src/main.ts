@@ -10,6 +10,13 @@ async function bootstrap(): Promise<void> {
             enableDebugMessages: true,
         }),
     );
+
+    app.enableCors({
+        origin: "*",
+        methods: ["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH"],
+        credentials: false,
+    });
+
     await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

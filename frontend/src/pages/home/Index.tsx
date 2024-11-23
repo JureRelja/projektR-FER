@@ -11,7 +11,7 @@ function App() {
     const roomCreateHandler = async (): Promise<void> => {
         const newSocket = socket.connect();
 
-        socket.emit("createRoom", { name: "Jure" }, (roomId: number) => {
+        socket.emit("createRoom", (roomId: number) => {
             navigate(`/room/${roomId}`);
         });
     };

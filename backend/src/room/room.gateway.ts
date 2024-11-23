@@ -12,12 +12,16 @@ export class RoomGateway {
 
         await client.join(roomId.toString());
 
-        console.log("createRoom");
+        console.log("Client" + client.id + " joined room: " + roomId);
         return roomId;
     }
 
     @SubscribeMessage("joinRoom")
-    joinRoom(@MessageBody() id: number): Promise<void> {
-        return this.roomService.joinRoom(id);
+    async joinRoom(@MessageBody() id: number, @ConnectedSocket() client: Socket): Promise<void> {
+        await this.roomService.joinRoom(typeof id === "string" ? parseInt(id) : id);
+
+        await client.join(id.toString());
+
+        console.log("Client" + client.id + " joined room: " + id);
     }
 }

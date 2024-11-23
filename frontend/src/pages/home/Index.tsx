@@ -7,10 +7,14 @@ import { useNavigate } from "react-router-dom";
 function App() {
     const navigate = useNavigate();
 
+    const [loading, setLoading] = useState<boolean>(false);
+
     //Create new room - start
     const roomCreateHandler = async (): Promise<void> => {
+        setLoading(true);
+
         socket.emit("createRoom", (roomId: number) => {
-            console.log("Room created with id: ", roomId);
+            setLoading(false);
             navigate(`/room/${roomId}`);
         });
     };
@@ -24,10 +28,11 @@ function App() {
     };
 
     const roomJoinHandler = (): void => {
-        socket.connect();
+        setLoading(true);
 
         socket.emit("joinRoom", { roomId: roomCode }, (success: boolean) => {
             if (success) {
+                setLoading(false);
                 navigate(`/room/${roomCode}`);
             }
         });
@@ -41,6 +46,7 @@ function App() {
                 <Button label="Novi poziv" onClick={roomCreateHandler} />
             </div>
 
+            <div className="flex flex-col gap-5 justify-center">{loading && <p className="text-center">Učitavanje...</p>}</div>
             <Divider />
 
             <div className="flex flex-col gap-5 justify-center">

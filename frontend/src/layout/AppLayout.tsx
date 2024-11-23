@@ -7,7 +7,7 @@ export default function AppLayout() {
                 <h1 className="text-3xl font-bold">Aplikacija za video, audio i tekstualnu komunikacju</h1>
             </header>
 
-            <div className="w-[1000px]">
+            <div className="w-[1000px] h-full my-5">
                 <Outlet />
             </div>
 

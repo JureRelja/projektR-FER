@@ -16,6 +16,7 @@ model Room {
 
 model Participant {
   id       Int       @id @default(autoincrement())
+  socketId String   @unique 
   role     Role      @default(PARTICIPANT)
   room     Room      @relation(fields: [roomId], references: [id])
   roomId   Int

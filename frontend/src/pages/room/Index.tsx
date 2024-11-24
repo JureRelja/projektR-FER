@@ -57,7 +57,7 @@ const createAndSendOffer = async (
 
     await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
 
-    mySocket.emit("makeCall", { offer, roomId: roomId });
+    mySocket.emit("makeCall", { offer });
 };
 
 //Callee Is getting called

@@ -36,4 +36,12 @@ export class RoomService {
 
         console.log("Client" + client.id + " joined room: " + numberRoomId);
     }
+
+    emitCallOffer(offer: RTCSessionDescriptionInit, caller: Socket): void {
+        caller.emit("gettingCalled", { offer: offer, socketId: caller.id });
+    }
+
+    emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket): void {
+        answerer.emit("answerMade", { answer: answer });
+    }
 }

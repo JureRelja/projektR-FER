@@ -27,7 +27,7 @@ function App() {
         setRoomCode(e.target.value);
     };
 
-    const roomJoinHandler = (): void => {
+    const roomJoinHandler = async (): Promise<void> => {
         setLoading(true);
 
         socket.emit("joinRoom", { roomId: roomCode }, (success: boolean) => {

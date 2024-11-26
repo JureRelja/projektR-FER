@@ -3,6 +3,7 @@ import { RoomRepository } from "./RoomRepository";
 import { RoomEntity } from "./entities/Room.entity";
 import { Socket } from "socket.io";
 import { ParticipantRepository } from "src/participants/ParticipantRepository";
+import { ParticipantEntity } from "src/participants/entities/participant.entity";
 
 @Injectable()
 export class RoomService {
@@ -21,27 +22,33 @@ export class RoomService {
         return newRoom.id;
     }
 
-    async joinRoom(roomId: number, client: Socket): Promise<void> {
+    async joinRoom(roomId: number, client: Socket): Promise<boolean> {
         const numberRoomId: number = typeof roomId === "string" ? parseInt(roomId) : roomId;
 
-        if (isNaN(numberRoomId)) {
-            throw new Error("Invalid room id");
+        const peopleInRoom: ParticipantEntity[] = await this.participantRepository.getParticipants(numberRoomId);
+
+        if (peopleInRoom.length >= 2) {
+            return false;
         }
 
         await this.roomRepository.joinRoom(numberRoomId, client.id);
 
         await client.join(numberRoomId.toString());
 
-        client.emit("roomData", this.participantRepository.getParticipants(numberRoomId));
+        client.emit("roomData", await this.participantRepository.getParticipants(numberRoomId));
 
         console.log("Client" + client.id + " joined room: " + numberRoomId);
+
+        return true;
     }
 
-    emitCallOffer(offer: RTCSessionDescriptionInit, caller: Socket): void {
-        caller.emit("gettingCalled", { offer: offer, socketId: caller.id });
+    async makeCall(offer: RTCSessionDescriptionInit, caller: Socket): Promise<void> {
+        const room: SetIterator<[string, string]> = caller.rooms.entries();
+
+        await this.participantRepository.updateParticipantSdp(caller.id, caller, offer);
     }
 
     emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket): void {
-        answerer.emit("answerMade", { answer: answer });
+        answerer.emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
     }
 }

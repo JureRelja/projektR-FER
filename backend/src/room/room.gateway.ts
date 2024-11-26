@@ -12,15 +12,16 @@ export class RoomGateway {
     }
 
     @SubscribeMessage("joinRoom")
-    async joinRoom(@MessageBody() id: number, @ConnectedSocket() client: Socket): Promise<void> {
-        this.roomService.joinRoom(id, client);
+    async joinRoom(@MessageBody() data: { roomId: number }, @ConnectedSocket() client: Socket): Promise<boolean> {
+        return this.roomService.joinRoom(data.roomId, client);
     }
 
     @SubscribeMessage("makeCall")
     makeCall(@MessageBody() callOffer: RTCSessionDescriptionInit, @ConnectedSocket() callerClient: Socket): void {
-        this.roomService.emitCallOffer(callOffer, callerClient);
+        this.roomService.makeCall(callOffer, callerClient);
     }
 
+    @SubscribeMessage("makeAnswer")
     answerCall(@MessageBody() callAnswer: RTCSessionDescriptionInit, @ConnectedSocket() answerClient: Socket): void {
         this.roomService.emitCallAnswer(callAnswer, answerClient);
     }

@@ -42,10 +42,14 @@ export class RoomService {
         return true;
     }
 
-    async makeCall(offer: RTCSessionDescriptionInit, caller: Socket): Promise<void> {
-        const room: SetIterator<[string, string]> = caller.rooms.entries();
+    async makeCall(offer: RTCSessionDescriptionInit, roomId: number, caller: Socket): Promise<void> {
+        console.log(offer, roomId);
 
-        await this.participantRepository.updateParticipantSdp(caller.id, caller, offer);
+        try {
+            await this.participantRepository.updateParticipantSdp(caller.id, roomId, offer);
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket): void {

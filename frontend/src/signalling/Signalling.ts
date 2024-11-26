@@ -3,7 +3,7 @@ import { Participant } from "../types/Participant";
 export interface Signalling {
     makeAnswer(answer: RTCSessionDescriptionInit, callerId: string | number): void;
 
-    startCall(offer: RTCSessionDescriptionInit): void;
+    startCall(offer: RTCSessionDescriptionInit, roomId: number): void;
 
     gettingCalled(
         setParticipant1: React.Dispatch<React.SetStateAction<Participant | undefined>>,

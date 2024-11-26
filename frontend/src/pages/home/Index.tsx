@@ -3,6 +3,20 @@ import Button from "../../components/Button";
 import Divider from "../../components/Divider";
 import { socket } from "../../signalling/websocket/socket";
 import { useNavigate } from "react-router-dom";
+import { Signalling } from "../../signalling/Signalling";
+import { WebSocketSignalling } from "../../signalling/websocket/SocketSignalling";
+import { WebRTC } from "../../WebRTC";
+
+export const webSocketsSignalling: Signalling = new WebSocketSignalling(socket);
+export const peerConnection = new RTCPeerConnection();
+export const webRTC = new WebRTC(peerConnection, webSocketsSignalling);
+
+(setParticipant1: React.Dispatch<React.SetStateAction<Participant | undefined>>, setParticipant2: React.Dispatch<React.SetStateAction<Participant | undefined>>) => {
+    //websockets implementation
+    webSocketsSignalling.answerMade(peerConnection);
+
+    webSocketsSignalling.getRoomData(setParticipant1, setParticipant2);
+};
 
 function App() {
     const navigate = useNavigate();
@@ -13,10 +27,7 @@ function App() {
     const roomCreateHandler = async (): Promise<void> => {
         setLoading(true);
 
-        socket.emit("createRoom", (roomId: number) => {
-            setLoading(false);
-            navigate(`/room/${roomId}`);
-        });
+        fetch(`${import.meta.env.VITE_BACKEND_URL}/`);
     };
     //Create new room - end
 
@@ -29,16 +40,6 @@ function App() {
 
     const roomJoinHandler = async (): Promise<void> => {
         setLoading(true);
-
-        socket.emit("joinRoom", { roomId: roomCode }, (success: boolean) => {
-            setLoading(false);
-
-            if (success) {
-                navigate(`/room/${roomCode}`);
-            } else {
-                alert("U ovom pozivu je vec dvoje članova. Molimo kreirajte novi poziv ili se pridružite nekom drugom.");
-            }
-        });
     };
     //Join existing room - end
 

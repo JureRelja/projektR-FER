@@ -27,6 +27,7 @@ export class WebSocketSignalling implements Signalling {
 
     answerMade(peerConnection: RTCPeerConnection): void {
         this.socket.on("answerMade", async (data) => {
+            console.log(data);
             if (data.caleeSocketId != this.socket.id) {
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
             }
@@ -38,13 +39,15 @@ export class WebSocketSignalling implements Signalling {
         setParticipant2: React.Dispatch<React.SetStateAction<Participant | undefined>>,
     ): void {
         this.socket.on("roomData", (data: Participant[]) => {
+            console.log(data);
+
             setParticipant1(data[0]);
             setParticipant2(data[1]);
         });
     }
 
-    startCall(offer: RTCSessionDescriptionInit): void {
-        this.socket.emit("makeCall", { offer });
+    startCall(offer: RTCSessionDescriptionInit, roomId: number): void {
+        this.socket.emit("makeCall", { offer, roomId });
     }
 
     makeAnswer(answer: RTCSessionDescriptionInit, callerId: string | number) {

@@ -19,4 +19,12 @@ export class ParticipantsService {
 
         return this.participantRepository.getParticipants(roomIdNum);
     }
+
+    async updateParticipantDetails(offer: RTCSessionDescriptionInit, socketId: string): Promise<void> {
+        try {
+            await this.participantRepository.updateParticipantSdp(socketId, offer);
+        } catch (e) {
+            console.log(e);
+        }
+    }
 }

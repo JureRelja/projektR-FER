@@ -26,11 +26,10 @@ export class ParticipantRepository {
         return participants;
     }
 
-    public async updateParticipantSdp(socketId: string, roomId: number, offer: RTCSessionDescriptionInit): Promise<void> {
+    public async updateParticipantSdp(socketId: string, offer: RTCSessionDescriptionInit): Promise<void> {
         await db.participant.update({
             where: {
                 socketId: socketId,
-                roomId: roomId,
             },
             data: {
                 sdp: offer.sdp,

@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, Post } from "@nestjs/common";
 import { ParticipantsService } from "./participants.service";
 import { ParticipantEntity } from "./entities/participant.entity";
 
@@ -11,8 +11,8 @@ export class ParticipantsController {
         return this.participantsService.findOne(socketId);
     }
 
-    @Get("in-room/:roomId")
-    async findBy(@Param("roomId") roomId: string): Promise<ParticipantEntity[]> {
-        return this.participantsService.findMany(roomId);
+    @Post("update/:socketId")
+    async updateParticipant(@Param("socketId") socketId: string, offer: RTCSessionDescriptionInit): Promise<void> {
+        await this.participantsService.updateParticipantDetails(offer, socketId);
     }
 }

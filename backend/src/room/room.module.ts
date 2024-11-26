@@ -7,5 +7,6 @@ import { ParticipantsModule } from "src/participants/participants.module";
 @Module({
     providers: [RoomGateway, RoomService, RoomRepository],
     imports: [ParticipantsModule],
+    exports: [RoomService, RoomRepository],
 })
 export class RoomModule {}

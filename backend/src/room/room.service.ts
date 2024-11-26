@@ -12,14 +12,14 @@ export class RoomService {
         private readonly participantRepository: ParticipantRepository,
     ) {}
 
-    async createRoom(client: Socket): Promise<number> {
+    async createRoom(client: Socket): Promise<RoomEntity> {
         const newRoom: RoomEntity = await this.roomRepository.createRoom(client.id);
 
         await client.join(newRoom.id.toString());
 
         console.log("Client" + client.id + " joined room: " + newRoom.id);
 
-        return newRoom.id;
+        return newRoom;
     }
 
     async joinRoom(roomId: number, client: Socket): Promise<boolean> {
@@ -40,16 +40,6 @@ export class RoomService {
         console.log("Client" + client.id + " joined room: " + numberRoomId);
 
         return true;
-    }
-
-    async makeCall(offer: RTCSessionDescriptionInit, roomId: number, caller: Socket): Promise<void> {
-        console.log(offer, roomId);
-
-        try {
-            await this.participantRepository.updateParticipantSdp(caller.id, roomId, offer);
-        } catch (e) {
-            console.log(e);
-        }
     }
 
     emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket): void {

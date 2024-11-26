@@ -20,7 +20,16 @@ function App() {
     const roomCreateHandler = async (): Promise<void> => {
         setLoading(true);
 
-        fetch(`${import.meta.env.VITE_BACKEND_URL}/`);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/`, {
+            body: JSON.stringify(socket),
+            method: "POST",
+        });
+
+        const room = await response.json();
+
+        await webRTC.createAndSendOffer(socket.id as string);
+
+        navigate(`/room/${room.id}`);
     };
     //Create new room - end
 
@@ -33,6 +42,21 @@ function App() {
 
     const roomJoinHandler = async (): Promise<void> => {
         setLoading(true);
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/`, {
+            body: JSON.stringify(socket),
+            method: "POST",
+        });
+
+        const joinnedRoom = await response.json();
+
+        if (joinnedRoom) {
+            await webRTC.createAndSendAnswer(roomCode);
+
+            navigate(`/room/${roomCode}`);
+        } else {
+            alert("U ovom pozivu se već nalazi dvoje sudionika.");
+        }
     };
     //Join existing room - end
 

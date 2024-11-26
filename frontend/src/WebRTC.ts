@@ -1,4 +1,3 @@
-import { Participant } from "./types/Participant";
 import { Signalling } from "./signalling/Signalling";
 
 const configuration = { iceServers: [{ urls: "stun:stun.example.org" }] };
@@ -7,6 +6,9 @@ const peerConnection = new RTCPeerConnection(configuration);
 export class WebRTC {
     private peerConnection: RTCPeerConnection;
     private signallingServer: Signalling;
+
+    private participant1Stream: MediaStream | null = null;
+    private participant2Stream: MediaStream | null = null;
 
     constructor(peerConnection: RTCPeerConnection, signallingServer: Signalling) {
         this.peerConnection = peerConnection;
@@ -22,11 +24,7 @@ export class WebRTC {
         }
     }
 
-    public async createAndSendOffer(
-        roomId: number,
-        setParicipant1: React.Dispatch<React.SetStateAction<Participant | undefined>>,
-        setParticipant2: React.Dispatch<React.SetStateAction<Participant | undefined>>,
-    ): Promise<void> {
+    public async createAndSendOffer(socketId: string): Promise<void> {
         //Displaying and capturing media for the first participant
         const stream = await this.getUserMedia();
 
@@ -34,41 +32,36 @@ export class WebRTC {
             return;
         }
 
-        setParicipant1((prev) => {
-            const newParticipant = prev;
-
-            if (newParticipant) {
-                newParticipant.stream = stream;
-            }
-
-            return newParticipant;
-        });
+        this.participant1Stream = stream;
 
         //Media from the other peer
         this.peerConnection.ontrack = function (event) {
-            setParticipant2((prev) => {
-                const newParticipant = prev;
+            setParicipat2Stream(event);
+        };
 
-                if (newParticipant) {
-                    newParticipant.stream = event.streams[0];
-                }
-
-                return newParticipant;
-            });
+        const setParicipat2Stream = (event: RTCTrackEvent) => {
+            this.participant2Stream = event.streams[0];
         };
 
         const offer: RTCSessionDescriptionInit = await this.peerConnection.createOffer();
 
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(offer));
 
-        this.signallingServer.startCall(offer, roomId);
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/participants/update/${socketId}`, {
+            body: JSON.stringify({
+                offer,
+            }),
+            method: "POST",
+        });
+
+        const data = await response.json();
     }
 
-    public async createAndSendAnswer(
-        data: { offer: RTCSessionDescriptionInit; socketId: string },
-        setParticipant1: React.Dispatch<React.SetStateAction<Participant | undefined>>,
-        setParticipant2: React.Dispatch<React.SetStateAction<Participant | undefined>>,
-    ): Promise<void> {
+    public async createAndSendAnswer(roomId: number): Promise<void> {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/`);
+
+        const data = await response.json();
+
         //Displaying and capturing media for the first participant
         let localStream: MediaStream | undefined;
 
@@ -81,27 +74,15 @@ export class WebRTC {
 
         localStream = stream;
 
-        setParticipant2((prev) => {
-            const newParticipant = prev;
-
-            if (newParticipant) {
-                newParticipant.stream = stream;
-            }
-
-            return newParticipant;
-        });
+        this.participant2Stream = stream;
 
         //Media from the other peer
-        peerConnection.ontrack = function (event) {
-            setParticipant1((prev) => {
-                const newParticipant = prev;
+        this.peerConnection.ontrack = function (event) {
+            setParicipat1Stream(event);
+        };
 
-                if (newParticipant) {
-                    newParticipant.stream = event.streams[0];
-                }
-
-                return newParticipant;
-            });
+        const setParicipat1Stream = (event: RTCTrackEvent) => {
+            this.participant2Stream = event.streams[0];
         };
 
         if (localStream) {
@@ -112,7 +93,7 @@ export class WebRTC {
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(new RTCSessionDescription(answer));
 
-            this.signallingServer.makeAnswer(answer, data.socketId);
+            this.signallingServer(answer, data.socketId);
         }
     }
 }

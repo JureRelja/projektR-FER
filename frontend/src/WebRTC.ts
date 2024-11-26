@@ -24,7 +24,7 @@ export class WebRTC {
         }
     }
 
-    public async createAndSendOffer(socketId: string): Promise<void> {
+    public async createAndSendOffer(roomId: number): Promise<void> {
         //Displaying and capturing media for the first participant
         const stream = await this.getUserMedia();
 
@@ -47,7 +47,7 @@ export class WebRTC {
 
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(offer));
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/participants/update/${socketId}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/update/${roomId}`, {
             body: JSON.stringify({
                 offer,
             }),
@@ -57,11 +57,7 @@ export class WebRTC {
         const data = await response.json();
     }
 
-    public async createAndSendAnswer(roomId: number): Promise<void> {
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/`);
-
-        const data = await response.json();
-
+    public async createAndSendAnswer(sdp: string, sdpType: RTCSdpType): Promise<void> {
         //Displaying and capturing media for the first participant
         let localStream: MediaStream | undefined;
 
@@ -87,13 +83,12 @@ export class WebRTC {
 
         if (localStream) {
             localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream as MediaStream));
-            console.log(data);
-            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+            await peerConnection.setRemoteDescription(new RTCSessionDescription({ sdp: sdp, type: sdpType }));
 
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(new RTCSessionDescription(answer));
 
-            this.signallingServer(answer, data.socketId);
+            // this.signallingServer(answer, data.socketId);
         }
     }
 }

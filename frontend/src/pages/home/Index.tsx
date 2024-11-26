@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Button from "../../components/Button";
 import Divider from "../../components/Divider";
-import { socket } from "../../websocket/socket";
+import { socket } from "../../signalling/websocket/socket";
 import { useNavigate } from "react-router-dom";
 
 function App() {
@@ -31,9 +31,12 @@ function App() {
         setLoading(true);
 
         socket.emit("joinRoom", { roomId: roomCode }, (success: boolean) => {
+            setLoading(false);
+
             if (success) {
-                setLoading(false);
                 navigate(`/room/${roomCode}`);
+            } else {
+                alert("U ovom pozivu je vec dvoje članova. Molimo kreirajte novi poziv ili se pridružite nekom drugom.");
             }
         });
     };

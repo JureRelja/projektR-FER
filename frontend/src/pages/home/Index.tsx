@@ -11,13 +11,6 @@ export const webSocketsSignalling: Signalling = new WebSocketSignalling(socket);
 export const peerConnection = new RTCPeerConnection();
 export const webRTC = new WebRTC(peerConnection, webSocketsSignalling);
 
-(setParticipant1: React.Dispatch<React.SetStateAction<Participant | undefined>>, setParticipant2: React.Dispatch<React.SetStateAction<Participant | undefined>>) => {
-    //websockets implementation
-    webSocketsSignalling.answerMade(peerConnection);
-
-    webSocketsSignalling.getRoomData(setParticipant1, setParticipant2);
-};
-
 function App() {
     const navigate = useNavigate();
 

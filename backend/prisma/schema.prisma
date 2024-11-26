@@ -8,17 +8,17 @@ datasource db {
 }
 
 model Room {
-  id          Int           @id @default(autoincrement())
-  name        String
+  id           Int           @id @default(autoincrement())
+  name         String
+  sdp          String?
+  sdpType      String?
   participants Participant[]
-  messages    Message[]
+  messages     Message[]
 }
 
 model Participant {
   id       Int       @id @default(autoincrement())
-  socketId String   @unique 
-  sdp   String?
-  sdpType String?
+  socketId String    @unique
   role     Role      @default(PARTICIPANT)
   room     Room      @relation(fields: [roomId], references: [id])
   roomId   Int

@@ -25,7 +25,7 @@ export default function Index() {
         startSignallingServer(setParticipant1, setParticipant2);
 
         const fetchParticipantData = async () => {
-            const thisParticipant = await fetch(`${import.meta.env.VITE_BACKEND_URL}/participants/in-room/${params.id}`);
+            const thisParticipant = await fetch(`${import.meta.env.VITE_BACKEND_URL}/participants/${params.id}`);
 
             if (thisParticipant.ok) {
                 const data: Participant[] = await thisParticipant.json();

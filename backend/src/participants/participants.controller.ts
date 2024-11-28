@@ -6,10 +6,10 @@ import { ParticipantEntity } from "./entities/participant.entity";
 export class ParticipantsController {
     constructor(private readonly participantsService: ParticipantsService) {}
 
-    @Get(":socketId")
-    async findOne(@Param("socketId") socketId: string): Promise<ParticipantEntity | null> {
-        return this.participantsService.findOne(socketId);
-    }
+    // @Get(":socketId")
+    // async findOne(@Param("socketId") socketId: string): Promise<ParticipantEntity | null> {
+    //     return this.participantsService.findOne(socketId);
+    // }
 
     // @Post("new")
     // async createParticipant(@Body() createParticipantDto: CreateParticipantDto): Promise<ParticipantEntity> {

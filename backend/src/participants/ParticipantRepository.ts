@@ -7,15 +7,15 @@ import { Participant, Role } from "@prisma/client";
 export class ParticipantRepository {
     constructor() {}
 
-    public async getParticipantBySocketId(socketId: string): Promise<ParticipantEntity | null> {
-        const participant: ParticipantEntity | null = await db.participant.findUnique({
-            where: {
-                socketId: socketId,
-            },
-        });
+    // public async getParticipantBySocketId(socketId: string): Promise<ParticipantEntity | null> {
+    //     const participant: ParticipantEntity | null = await db.participant.findUnique({
+    //         where: {
+    //             socketId: socketId,
+    //         },
+    //     });
 
-        return participant;
-    }
+    //     return participant;
+    // }
 
     public async getParticipants(roomId: number): Promise<ParticipantEntity[]> {
         const participants: ParticipantEntity[] = await db.participant.findMany({

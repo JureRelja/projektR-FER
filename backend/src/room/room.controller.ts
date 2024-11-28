@@ -9,7 +9,6 @@ export class RoomController {
 
     @Post("/create")
     async createRoom(@Body() createRoomDto: CreateRoomDto): Promise<RoomEntity> {
-        console.log(createRoomDto);
         return await this.roomService.createRoom(createRoomDto);
     }
 

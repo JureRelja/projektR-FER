@@ -10,7 +10,7 @@ const startSignallingServer = (
     setParticipant2: React.Dispatch<React.SetStateAction<Participant | undefined>>,
 ) => {
     //websockets implementation
-    // webSocketsSignalling.answerMade(peerConnection);
+    webSocketsSignalling.answerMade(webRTC.getPeerConnection());
 
     webSocketsSignalling.getRoomData(setParticipant1, setParticipant2);
 };
@@ -31,10 +31,14 @@ export default function Index() {
                 const data: Participant[] = await thisParticipant.json();
 
                 if (data.length >= 1 && data[0]) {
+                    data[0].stream = webRTC.getParticipant1Stream();
+
                     setParticipant1(data[0]);
                 }
 
                 if (data.length == 2 && data[1]) {
+                    data[0].stream = webRTC.getParticipant2Stream();
+
                     setParticipant2(data[1]);
                 }
             }

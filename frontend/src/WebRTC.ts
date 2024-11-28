@@ -1,17 +1,24 @@
-import { Signalling } from "./signalling/Signalling";
-
 const configuration = { iceServers: [{ urls: "stun:stun.example.org" }] };
 const peerConnection = new RTCPeerConnection(configuration);
 
 export class WebRTC {
     private peerConnection: RTCPeerConnection = new RTCPeerConnection();
-    private signallingServer: Signalling;
 
     private participant1Stream: MediaStream | null = null;
     private participant2Stream: MediaStream | null = null;
 
-    constructor(signallingServer: Signalling) {
-        this.signallingServer = signallingServer;
+    constructor() {}
+
+    getPeerConnection(): RTCPeerConnection {
+        return this.peerConnection;
+    }
+
+    getParticipant1Stream(): MediaStream | null {
+        return this.participant1Stream;
+    }
+
+    getParticipant2Stream(): MediaStream | null {
+        return this.participant2Stream;
     }
 
     async getUserMedia(): Promise<MediaStream | undefined> {
@@ -49,7 +56,7 @@ export class WebRTC {
         return offer;
     }
 
-    public async createAndSendAnswer(sdp: string, sdpType: RTCSdpType): Promise<void> {
+    public async createAndSendAnswer(sdp: string, sdpType: RTCSdpType): Promise<RTCSessionDescriptionInit | null> {
         //Displaying and capturing media for the first participant
         let localStream: MediaStream | undefined;
 
@@ -57,7 +64,7 @@ export class WebRTC {
         const stream = await this.getUserMedia();
 
         if (!stream) {
-            return;
+            return null;
         }
 
         localStream = stream;
@@ -66,10 +73,10 @@ export class WebRTC {
 
         //Media from the other peer
         this.peerConnection.ontrack = function (event) {
-            setParicipat1Stream(event);
+            setParicipat2Stream(event);
         };
 
-        const setParicipat1Stream = (event: RTCTrackEvent) => {
+        const setParicipat2Stream = (event: RTCTrackEvent) => {
             this.participant2Stream = event.streams[0];
         };
 
@@ -80,7 +87,8 @@ export class WebRTC {
             const answer = await peerConnection.createAnswer();
             await peerConnection.setLocalDescription(new RTCSessionDescription(answer));
 
-            // this.signallingServer(answer, data.socketId);
+            return answer;
         }
+        return null;
     }
 }

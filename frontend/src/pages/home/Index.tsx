@@ -8,7 +8,7 @@ import { WebSocketSignalling } from "../../signalling/websocket/SocketSignalling
 import { WebRTC } from "../../WebRTC";
 
 export const webSocketsSignalling: Signalling = new WebSocketSignalling(socket);
-export const webRTC = new WebRTC(webSocketsSignalling);
+export const webRTC = new WebRTC();
 
 function App() {
     const navigate = useNavigate();
@@ -39,6 +39,10 @@ function App() {
 
         const room = await response.json();
 
+        socket.emit("joinRoom", {
+            roomId: room.id,
+        });
+
         navigate(`/room/${room.id}`);
     };
     //Create new room - end
@@ -53,14 +57,26 @@ function App() {
     const roomJoinHandler = async (): Promise<void> => {
         setLoading(true);
 
+        socket.connect();
+
         const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}`, {
             method: "POST",
+            body: JSON.stringify({ socketId: socket.id }),
+            headers: {
+                "Content-Type": "application/json",
+            },
         });
 
         const joinnedRoom = await response.json();
 
+        socket.emit("joinRoom", {
+            roomId: roomCode,
+        });
+
         if (joinnedRoom) {
-            await webRTC.createAndSendAnswer(joinnedRoom.sdp, joinnedRoom.sdpType);
+            const answer = await webRTC.createAndSendAnswer(joinnedRoom.sdp, joinnedRoom.sdpType);
+
+            socket.emit("makeAnswer", { callAnswer: answer });
 
             navigate(`/room/${roomCode}`);
         } else {

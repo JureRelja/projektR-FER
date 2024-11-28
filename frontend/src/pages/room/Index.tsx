@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { socket } from "../../signalling/websocket/socket";
 import { useEffect, useState } from "react";
 import { Participant } from "../../types/Participant";
-import { peerConnection } from "../Home";
+import { webRTC } from "../Home";
 import { webSocketsSignalling } from "../Home";
 
 const startSignallingServer = (
@@ -10,7 +10,7 @@ const startSignallingServer = (
     setParticipant2: React.Dispatch<React.SetStateAction<Participant | undefined>>,
 ) => {
     //websockets implementation
-    webSocketsSignalling.answerMade(peerConnection);
+    // webSocketsSignalling.answerMade(peerConnection);
 
     webSocketsSignalling.getRoomData(setParticipant1, setParticipant2);
 };

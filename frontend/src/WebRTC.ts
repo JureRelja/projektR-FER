@@ -4,14 +4,13 @@ const configuration = { iceServers: [{ urls: "stun:stun.example.org" }] };
 const peerConnection = new RTCPeerConnection(configuration);
 
 export class WebRTC {
-    private peerConnection: RTCPeerConnection;
+    private peerConnection: RTCPeerConnection = new RTCPeerConnection();
     private signallingServer: Signalling;
 
     private participant1Stream: MediaStream | null = null;
     private participant2Stream: MediaStream | null = null;
 
-    constructor(peerConnection: RTCPeerConnection, signallingServer: Signalling) {
-        this.peerConnection = peerConnection;
+    constructor(signallingServer: Signalling) {
         this.signallingServer = signallingServer;
     }
 
@@ -24,12 +23,12 @@ export class WebRTC {
         }
     }
 
-    public async createAndSendOffer(roomId: number): Promise<void> {
+    public async createAndSendOffer(): Promise<RTCSessionDescriptionInit | null> {
         //Displaying and capturing media for the first participant
         const stream = await this.getUserMedia();
 
         if (!stream) {
-            return;
+            return null;
         }
 
         this.participant1Stream = stream;
@@ -47,14 +46,7 @@ export class WebRTC {
 
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(offer));
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/update/${roomId}`, {
-            body: JSON.stringify({
-                offer,
-            }),
-            method: "POST",
-        });
-
-        const data = await response.json();
+        return offer;
     }
 
     public async createAndSendAnswer(sdp: string, sdpType: RTCSdpType): Promise<void> {

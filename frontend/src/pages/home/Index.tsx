@@ -8,8 +8,7 @@ import { WebSocketSignalling } from "../../signalling/websocket/SocketSignalling
 import { WebRTC } from "../../WebRTC";
 
 export const webSocketsSignalling: Signalling = new WebSocketSignalling(socket);
-export const peerConnection = new RTCPeerConnection();
-export const webRTC = new WebRTC(peerConnection, webSocketsSignalling);
+export const webRTC = new WebRTC(webSocketsSignalling);
 
 function App() {
     const navigate = useNavigate();
@@ -20,14 +19,25 @@ function App() {
     const roomCreateHandler = async (): Promise<void> => {
         setLoading(true);
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/`, {
-            body: JSON.stringify(socket),
+        socket.connect();
+
+        const offer = await webRTC.createAndSendOffer();
+
+        const body = JSON.stringify({
+            sdpOffer: offer?.sdp,
+            sdpType: offer?.type,
+            socketId: socket.id,
+        });
+
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/create`, {
+            body: body,
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
         });
 
         const room = await response.json();
-
-        await webRTC.createAndSendOffer(socket.id as string);
 
         navigate(`/room/${room.id}`);
     };
@@ -43,15 +53,14 @@ function App() {
     const roomJoinHandler = async (): Promise<void> => {
         setLoading(true);
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/`, {
-            body: JSON.stringify(socket),
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}`, {
             method: "POST",
         });
 
         const joinnedRoom = await response.json();
 
         if (joinnedRoom) {
-            await webRTC.createAndSendAnswer(roomCode);
+            await webRTC.createAndSendAnswer(joinnedRoom.sdp, joinnedRoom.sdpType);
 
             navigate(`/room/${roomCode}`);
         } else {

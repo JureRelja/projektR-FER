@@ -1,9 +1,9 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, ConnectedSocket } from "@nestjs/websockets";
-import { RoomService } from "./room.service";
+import { RoomService } from "../room/room.service";
 import { Socket } from "socket.io";
 
 @WebSocketGateway({ cors: true })
-export class RoomGateway {
+export class RoomWsGateway {
     constructor(private readonly roomService: RoomService) {}
 
     @SubscribeMessage("makeAnswer")

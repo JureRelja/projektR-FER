@@ -14,7 +14,7 @@ export class RoomService {
     ) {}
 
     async createRoom(createRoomDto: CreateRoomDto): Promise<RoomEntity> {
-        const newRoom: RoomEntity = await this.roomRepository.createRoom(createRoomDto.socketId, createRoomDto.offer);
+        const newRoom: RoomEntity = await this.roomRepository.createRoom(createRoomDto.socketId, createRoomDto.sdpOffer, createRoomDto.sdpType);
 
         return newRoom;
     }

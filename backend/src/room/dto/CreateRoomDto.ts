@@ -1,4 +1,5 @@
 export class CreateRoomDto {
-    offer: RTCSessionDescriptionInit;
+    sdpOffer: string;
+    sdpType: string;
     socketId: string;
 }

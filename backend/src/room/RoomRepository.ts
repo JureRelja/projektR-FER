@@ -7,12 +7,12 @@ import { Role } from "@prisma/client";
 export class RoomRepository {
     constructor() {}
 
-    public async createRoom(socketId: string, offer: RTCSessionDescriptionInit): Promise<RoomEntity> {
+    public async createRoom(socketId: string, sdpOffer: string, sdpType: string): Promise<RoomEntity> {
         const newRoom: RoomEntity = await db.room.create({
             data: {
                 name: "New room",
-                sdp: offer.sdp,
-                sdpType: offer.type,
+                sdp: sdpOffer,
+                sdpType: sdpType,
                 participants: {
                     create: {
                         socketId: socketId,

@@ -8,6 +8,7 @@ async function bootstrap(): Promise<void> {
     app.useGlobalPipes(
         new ValidationPipe({
             enableDebugMessages: true,
+            transform: true,
         }),
     );
 

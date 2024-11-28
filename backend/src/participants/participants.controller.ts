@@ -1,7 +1,6 @@
-import { Controller, Get, Param, Post } from "@nestjs/common";
+import { Controller, Get, Param } from "@nestjs/common";
 import { ParticipantsService } from "./participants.service";
 import { ParticipantEntity } from "./entities/participant.entity";
-import { CreateParticipantDto } from "./dto/CreateParticipantDto";
 
 @Controller("participants")
 export class ParticipantsController {
@@ -13,7 +12,7 @@ export class ParticipantsController {
     }
 
     // @Post("new")
-    // async createParticipant(@MessageBody() createParticipantDto: CreateParticipantDto): Promise<ParticipantEntity> {
+    // async createParticipant(@Body() createParticipantDto: CreateParticipantDto): Promise<ParticipantEntity> {
     //     return this.participantsService.createParticipant(createParticipantDto);
     // }
 }

@@ -12,7 +12,7 @@ export class RoomWsGateway {
     }
 
     @SubscribeMessage("joinRoom")
-    async joinRoom(@MessageBody() roomId: number, @ConnectedSocket() client: Socket): Promise<void> {
-        this.roomService.socketJoinRoom(roomId, client);
+    async joinRoom(@MessageBody() room: { roomId: number }, @ConnectedSocket() client: Socket): Promise<void> {
+        this.roomService.socketJoinRoom(room.roomId, client);
     }
 }

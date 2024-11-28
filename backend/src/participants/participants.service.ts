@@ -6,11 +6,8 @@ import { ParticipantRepository } from "./ParticipantRepository";
 export class ParticipantsService {
     constructor(private readonly participantRepository: ParticipantRepository) {}
 
-    // async findOne(socketId: string): Promise<ParticipantEntity | null> {
-    //     return this.participantRepository.getParticipantBySocketId(socketId);
-    // }
-
     async findMany(roomId: number): Promise<ParticipantEntity[]> {
+        console.log(roomId);
         return this.participantRepository.getParticipants(roomId);
     }
 

@@ -10,4 +10,9 @@ export class RoomGateway {
     answerCall(@MessageBody() callAnswer: RTCSessionDescriptionInit, @ConnectedSocket() answerClient: Socket): void {
         this.roomService.emitCallAnswer(callAnswer, answerClient);
     }
+
+    @SubscribeMessage("joinRoom")
+    async joinRoom(@MessageBody() roomId: number, @ConnectedSocket() client: Socket): Promise<void> {
+        this.roomService.socketJoinRoom(roomId, client);
+    }
 }

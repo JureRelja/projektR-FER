@@ -10,13 +10,11 @@ export class ParticipantsService {
         return this.participantRepository.getParticipantBySocketId(socketId);
     }
 
-    async findMany(roomId: string): Promise<ParticipantEntity[]> {
-        const roomIdNum: number = parseInt(roomId);
+    async findMany(roomId: number): Promise<ParticipantEntity[]> {
+        return this.participantRepository.getParticipants(roomId);
+    }
 
-        if (isNaN(roomIdNum)) {
-            throw new Error("Invalid room id");
-        }
-
-        return this.participantRepository.getParticipants(roomIdNum);
+    async createParticipant(roomId: number, socketId: string): Promise<ParticipantEntity> {
+        return await this.participantRepository.createParticipant(roomId, socketId);
     }
 }

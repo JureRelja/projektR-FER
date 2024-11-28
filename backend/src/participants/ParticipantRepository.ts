@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import db from "../db/db.server";
 import { ParticipantEntity } from "./entities/participant.entity";
+import { Participant, Role } from "@prisma/client";
 
 @Injectable()
 export class ParticipantRepository {
@@ -26,15 +27,15 @@ export class ParticipantRepository {
         return participants;
     }
 
-    public async updateParticipantSdp(socketId: string, offer: RTCSessionDescriptionInit): Promise<void> {
-        await db.participant.update({
-            where: {
-                socketId: socketId,
-            },
+    public async createParticipant(roomId: number, socketId: string): Promise<Participant> {
+        const newParticipant: Participant = await db.participant.create({
             data: {
-                sdp: offer.sdp,
-                sdpType: offer.type,
+                role: Role.PARTICIPANT,
+                socketId: socketId,
+                roomId: roomId,
             },
         });
+
+        return newParticipant;
     }
 }

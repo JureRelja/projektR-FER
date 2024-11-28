@@ -1,16 +1,18 @@
 import { Injectable } from "@nestjs/common";
 import db from "../db/db.server";
 import { RoomEntity } from "./entities/Room.entity";
-import { Participant, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 
 @Injectable()
 export class RoomRepository {
     constructor() {}
 
-    public async createRoom(socketId: string): Promise<RoomEntity> {
+    public async createRoom(socketId: string, offer: RTCSessionDescriptionInit): Promise<RoomEntity> {
         const newRoom: RoomEntity = await db.room.create({
             data: {
                 name: "New room",
+                sdp: offer.sdp,
+                sdpType: offer.type,
                 participants: {
                     create: {
                         socketId: socketId,
@@ -23,15 +25,15 @@ export class RoomRepository {
         return newRoom;
     }
 
-    public async joinRoom(roomId: number, socketId: string): Promise<Participant> {
-        const newParticipant: Participant = await db.participant.create({
+    public async updateRoomSdp(id: number, offer: RTCSessionDescriptionInit): Promise<void> {
+        await db.room.update({
+            where: {
+                id: id,
+            },
             data: {
-                role: Role.PARTICIPANT,
-                socketId: socketId,
-                roomId: roomId,
+                sdp: offer.sdp,
+                sdpType: offer.type,
             },
         });
-
-        return newParticipant;
     }
 }

@@ -1,14 +1,17 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, ConnectedSocket } from "@nestjs/websockets";
+import { WebSocketGateway, SubscribeMessage, MessageBody, ConnectedSocket, WebSocketServer } from "@nestjs/websockets";
 import { RoomService } from "../room/room.service";
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 
 @WebSocketGateway({ cors: true })
 export class RoomWsGateway {
+    @WebSocketServer()
+    server: Server;
+
     constructor(private readonly roomService: RoomService) {}
 
     @SubscribeMessage("makeAnswer")
-    answerCall(@MessageBody() callAnswer: RTCSessionDescriptionInit, @ConnectedSocket() answerClient: Socket): void {
-        this.roomService.emitCallAnswer(callAnswer, answerClient);
+    answerCall(@MessageBody() callAnswer: { roomId: number; answer: RTCSessionDescriptionInit }, @ConnectedSocket() answerClient: Socket): void {
+        this.roomService.emitCallAnswer(callAnswer.answer, answerClient, this.server, callAnswer.roomId);
     }
 
     @SubscribeMessage("joinRoom")

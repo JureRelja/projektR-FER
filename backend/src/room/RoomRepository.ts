@@ -7,6 +7,14 @@ import { Role } from "@prisma/client";
 export class RoomRepository {
     constructor() {}
 
+    public async getRoomById(roomId: number): Promise<RoomEntity | null> {
+        return await db.room.findUnique({
+            where: {
+                id: roomId,
+            },
+        });
+    }
+
     public async createRoom(socketId: string, sdpOffer: string, sdpType: string): Promise<RoomEntity> {
         const newRoom: RoomEntity = await db.room.create({
             data: {

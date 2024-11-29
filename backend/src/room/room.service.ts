@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RoomRepository } from "./RoomRepository";
 import { RoomEntity } from "./entities/Room.entity";
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { ParticipantRepository } from "src/participants/ParticipantRepository";
 import { ParticipantEntity } from "src/participants/entities/participant.entity";
 import { CreateRoomDto } from "./dto/CreateRoomDto";
@@ -19,22 +19,20 @@ export class RoomService {
         return newRoom;
     }
 
-    async joinRoom(roomId: number, socketId: string): Promise<boolean> {
+    async joinRoom(roomId: number, socketId: string): Promise<RoomEntity | null> {
         if (await this.canJoinRoom(roomId)) {
             await this.participantRepository.createParticipant(roomId, socketId);
-            return true;
+            return this.roomRepository.getRoomById(roomId);
         }
 
-        return false;
+        return null;
     }
 
     async socketJoinRoom(roomId: number, client: Socket): Promise<boolean> {
-        const numberRoomId: number = typeof roomId === "string" ? parseInt(roomId) : roomId;
-
-        if (await this.canJoinRoom(numberRoomId)) {
+        if (!client.rooms.has(roomId.toString())) {
             await client.join(roomId.toString());
 
-            console.log("Client" + client.id + " joined room: " + roomId);
+            console.log("Client " + client.id + " joined room: " + roomId);
         }
 
         return true;
@@ -49,7 +47,8 @@ export class RoomService {
         return true;
     }
 
-    emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket): void {
-        answerer.emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
+    emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket, server: Server, roomId: number): void {
+        console.log("emitting answerMade");
+        server.to(roomId.toString()).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
     }
 }

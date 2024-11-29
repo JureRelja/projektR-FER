@@ -7,7 +7,6 @@ export class ParticipantsService {
     constructor(private readonly participantRepository: ParticipantRepository) {}
 
     async findMany(roomId: number): Promise<ParticipantEntity[]> {
-        console.log(roomId);
         return this.participantRepository.getParticipants(roomId);
     }
 

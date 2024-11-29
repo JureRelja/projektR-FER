@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from "@nestjs/common";
+import { Body, Controller, Param, Post, Query } from "@nestjs/common";
 import { RoomService } from "./room.service";
 import { RoomEntity } from "./entities/Room.entity";
 import { CreateRoomDto } from "./dto/CreateRoomDto";
@@ -13,7 +13,7 @@ export class RoomController {
     }
 
     @Post("/:roomId")
-    async joinRoom(@Param("roomId") roomId: number, @Body() socketId: string): Promise<boolean> {
+    async joinRoom(@Param("roomId") roomId: number, @Query("socketId") socketId: string): Promise<RoomEntity | null> {
         return await this.roomService.joinRoom(roomId, socketId);
     }
 }

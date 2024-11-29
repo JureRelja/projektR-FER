@@ -20,7 +20,7 @@ export class RoomWsGateway {
     }
 
     @SubscribeMessage("iceCandidate")
-    async recieveIceCandidate(@MessageBody() candidate: { iceCandidate: RTCIceCandidate }, @ConnectedSocket() client: Socket): void {
+    async recieveIceCandidate(@MessageBody() candidate: { iceCandidate: RTCIceCandidate }, @ConnectedSocket() client: Socket): Promise<void> {
         this.roomService.recieveIceCandidate(candidate, client, this.server);
     }
 }

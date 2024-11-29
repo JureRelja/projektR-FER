@@ -33,8 +33,8 @@ export class RoomRepository {
         return newRoom;
     }
 
-    public async updateRoomSdp(id: number, offer: RTCSessionDescriptionInit): Promise<void> {
-        await db.room.update({
+    public async updateRoomSdp(id: number, offer: RTCSessionDescriptionInit): Promise<RoomEntity | null> {
+        return await db.room.update({
             where: {
                 id: id,
             },

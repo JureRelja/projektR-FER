@@ -5,6 +5,7 @@ import { Server, Socket } from "socket.io";
 import { ParticipantRepository } from "src/participants/ParticipantRepository";
 import { ParticipantEntity } from "src/participants/entities/participant.entity";
 import { CreateRoomDto } from "./dto/CreateRoomDto";
+import { UpdateRoomDto } from "./dto/UpdateRoom";
 
 @Injectable()
 export class RoomService {
@@ -17,6 +18,10 @@ export class RoomService {
         const newRoom: RoomEntity = await this.roomRepository.createRoom(createRoomDto.socketId, createRoomDto.sdpOffer, createRoomDto.sdpType);
 
         return newRoom;
+    }
+
+    async updateRoomSdp(roomId: number, updateRoomDto: UpdateRoomDto): Promise<RoomEntity | null> {
+        return await this.roomRepository.updateRoomSdp(roomId, { sdp: updateRoomDto.sdpOffer, type: updateRoomDto.sdpType as RTCSdpType });
     }
 
     async joinRoom(roomId: number, socketId: string): Promise<RoomEntity | null> {

@@ -8,7 +8,7 @@ import { WebSocketSignalling } from "../../signalling/websocket/SocketSignalling
 import { WebRTC } from "../../WebRTC";
 
 export const webSocketsSignalling: Signalling = new WebSocketSignalling(socket);
-export const webRTC = new WebRTC();
+export const webRTC = new WebRTC(webSocketsSignalling);
 
 function App() {
     const navigate = useNavigate();
@@ -48,10 +48,10 @@ function App() {
     //Create new room - end
 
     //Join existing room - start
-    const [roomCode, setRoomCode] = useState<number>();
+    const [roomCode, setRoomCode] = useState<string>("");
 
     const roomCodeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        setRoomCode(parseInt(e.target.value));
+        setRoomCode(e.target.value);
     };
 
     const roomJoinHandler = async (): Promise<void> => {
@@ -59,7 +59,7 @@ function App() {
 
         socket.connect();
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}?socketId=${socket.id}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${Number(roomCode)}?socketId=${socket.id}`, {
             method: "POST",
         });
 
@@ -100,7 +100,7 @@ function App() {
                 <h2 className="text-2xl text-center">Pridruži se postojećem pozivu</h2>
                 <input
                     className="border-2 rounded-sm px-3 py-2 border-gray-400"
-                    type="number"
+                    type="text"
                     value={roomCode}
                     placeholder="Unesite kod poziva, npr. f20jf04j043f0344fj0"
                     onChange={roomCodeHandler}

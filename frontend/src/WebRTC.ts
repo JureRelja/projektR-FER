@@ -73,11 +73,11 @@ export class WebRTC {
 
         //Media from the other peer
         this.peerConnection.ontrack = function (event) {
-            setParicipat2Stream(event);
+            setParicipat1Stream(event);
         };
 
-        const setParicipat2Stream = (event: RTCTrackEvent) => {
-            this.participant2Stream = event.streams[0];
+        const setParicipat1Stream = (event: RTCTrackEvent) => {
+            this.participant1Stream = event.streams[0];
         };
 
         if (localStream) {

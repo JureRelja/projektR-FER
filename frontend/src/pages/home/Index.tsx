@@ -48,10 +48,10 @@ function App() {
     //Create new room - end
 
     //Join existing room - start
-    const [roomCode, setRoomCode] = useState<string>("");
+    const [roomCode, setRoomCode] = useState<number>();
 
     const roomCodeHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        setRoomCode(e.target.value);
+        setRoomCode(parseInt(e.target.value));
     };
 
     const roomJoinHandler = async (): Promise<void> => {
@@ -59,24 +59,25 @@ function App() {
 
         socket.connect();
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}`, {
+        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}?socketId=${socket.id}`, {
             method: "POST",
-            body: JSON.stringify({ socketId: socket.id }),
-            headers: {
-                "Content-Type": "application/json",
-            },
         });
 
-        const joinnedRoom = await response.json();
+        if (!response) {
+            alert("U ovom pozivu se već nalazi dvoje sudionika.");
+            return;
+        }
 
         socket.emit("joinRoom", {
             roomId: roomCode,
         });
 
+        const joinnedRoom = await response.json();
+
         if (joinnedRoom) {
             const answer = await webRTC.createAndSendAnswer(joinnedRoom.sdp, joinnedRoom.sdpType);
 
-            socket.emit("makeAnswer", { callAnswer: answer });
+            socket.emit("makeAnswer", { roomId: joinnedRoom.id, answer: answer });
 
             navigate(`/room/${roomCode}`);
         } else {
@@ -99,7 +100,7 @@ function App() {
                 <h2 className="text-2xl text-center">Pridruži se postojećem pozivu</h2>
                 <input
                     className="border-2 rounded-sm px-3 py-2 border-gray-400"
-                    type="text"
+                    type="number"
                     value={roomCode}
                     placeholder="Unesite kod poziva, npr. f20jf04j043f0344fj0"
                     onChange={roomCodeHandler}

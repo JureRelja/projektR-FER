@@ -11,7 +11,7 @@ export class WebSocketSignalling implements Signalling {
 
     answerMade(peerConnection: RTCPeerConnection): void {
         this.socket.on("answerMade", async (data) => {
-            console.log(data);
+            console.log("andwerMade", data);
             if (data.caleeSocketId != this.socket.id) {
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
             }

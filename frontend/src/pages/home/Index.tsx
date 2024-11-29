@@ -5,10 +5,9 @@ import { socket } from "../../signalling/websocket/socket";
 import { useNavigate } from "react-router-dom";
 import { Signalling } from "../../signalling/Signalling";
 import { WebSocketSignalling } from "../../signalling/websocket/SocketSignalling";
-import { WebRTC } from "../../WebRTC";
+import { Room } from "../../types/Room";
 
 export const webSocketsSignalling: Signalling = new WebSocketSignalling(socket);
-export const webRTC = new WebRTC(webSocketsSignalling);
 
 function App() {
     const navigate = useNavigate();
@@ -19,31 +18,23 @@ function App() {
     const roomCreateHandler = async (): Promise<void> => {
         setLoading(true);
 
-        socket.connect();
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/create`, {
+                body: JSON.stringify({ socketId: webSocketsSignalling.getUserId() }),
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+            });
 
-        const offer = await webRTC.createAndSendOffer();
+            const room: Room = await response.json();
 
-        const body = JSON.stringify({
-            sdpOffer: offer?.sdp,
-            sdpType: offer?.type,
-            socketId: socket.id,
-        });
+            webSocketsSignalling.joinRoom(room.uuid);
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/create`, {
-            body: body,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
-        const room = await response.json();
-
-        socket.emit("joinRoom", {
-            roomId: room.id,
-        });
-
-        navigate(`/room/${room.id}`);
+            navigate(`/room/${room.uuid}`);
+        } catch (error) {
+            console.log(error);
+        }
     };
     //Create new room - end
 
@@ -57,30 +48,22 @@ function App() {
     const roomJoinHandler = async (): Promise<void> => {
         setLoading(true);
 
-        socket.connect();
+        try {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}`, {
+                body: JSON.stringify({ socketId: webSocketsSignalling.getUserId() }),
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json",
+                },
+            });
 
-        const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${Number(roomCode)}?socketId=${socket.id}`, {
-            method: "POST",
-        });
+            const joinnedRoom: Room | null = await response.json();
 
-        if (!response) {
-            alert("U ovom pozivu se već nalazi dvoje sudionika.");
-            return;
-        }
-
-        socket.emit("joinRoom", {
-            roomId: roomCode,
-        });
-
-        const joinnedRoom = await response.json();
-
-        if (joinnedRoom) {
-            const answer = await webRTC.createAndSendAnswer(joinnedRoom.sdp, joinnedRoom.sdpType);
-
-            socket.emit("makeAnswer", { roomId: joinnedRoom.id, answer: answer });
+            webSocketsSignalling.joinRoom(roomCode);
 
             navigate(`/room/${roomCode}`);
-        } else {
+        } catch (error) {
+            console.log(error);
             alert("U ovom pozivu se već nalazi dvoje sudionika.");
         }
     };
@@ -89,7 +72,7 @@ function App() {
     return (
         <div className="flex flex-col gap-12 w-full">
             <div className="flex flex-col gap-5 justify-center items-center">
-                <h2 className="text-2xl text-center">Započni novi poziv</h2>
+                <h2 className="text-2xl text-center">Novi poziv</h2>
                 <Button label="Novi poziv" onClick={roomCreateHandler} />
             </div>
 

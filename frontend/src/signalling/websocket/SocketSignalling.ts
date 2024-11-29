@@ -5,7 +5,18 @@ export class WebSocketSignalling implements Signalling {
     private socket: Socket;
 
     constructor(socket: Socket) {
+        socket.connect();
         this.socket = socket;
+    }
+
+    joinRoom(roomId: string): void {
+        this.socket.emit("joinRoom", {
+            roomId: roomId,
+        });
+    }
+
+    getUserId(): string {
+        return this.socket.id as string;
     }
 
     emitIceCandidate(data: { iceCandidate: RTCIceCandidate }): void {

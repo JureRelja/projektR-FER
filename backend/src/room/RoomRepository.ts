@@ -15,12 +15,9 @@ export class RoomRepository {
         });
     }
 
-    public async createRoom(socketId: string, sdpOffer: string, sdpType: string): Promise<RoomEntity> {
+    public async createRoom(socketId: string): Promise<RoomEntity> {
         const newRoom: RoomEntity = await db.room.create({
             data: {
-                name: "New room",
-                sdp: sdpOffer,
-                sdpType: sdpType,
                 participants: {
                     create: {
                         socketId: socketId,

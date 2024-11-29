@@ -47,6 +47,12 @@ export class RoomService {
         return true;
     }
 
+    public recieveIceCandidate(candidate: { iceCandidate: RTCIceCandidate }, client: Socket, server: Server): void {
+        const rooms: string[] = Array.from(client.rooms);
+        console.log("emitting ice candidate");
+        server.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
+    }
+
     emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket, server: Server, roomId: number): void {
         console.log("emitting answerMade");
         server.to(roomId.toString()).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });

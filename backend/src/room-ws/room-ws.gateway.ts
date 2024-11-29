@@ -18,4 +18,9 @@ export class RoomWsGateway {
     async joinRoom(@MessageBody() room: { roomId: number }, @ConnectedSocket() client: Socket): Promise<void> {
         this.roomService.socketJoinRoom(room.roomId, client);
     }
+
+    @SubscribeMessage("iceCandidate")
+    async recieveIceCandidate(@MessageBody() candidate: { iceCandidate: RTCIceCandidate }, @ConnectedSocket() client: Socket): void {
+        this.roomService.recieveIceCandidate(candidate, client, this.server);
+    }
 }

@@ -2,14 +2,15 @@ import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Participant } from "../../types/Participant";
 import { WebRTC } from "../../WebRTC";
-import { createAndSendOffer, createAndSendAnswer, peerConnection } from "../../web-RTC";
 import { webSocketsSignalling } from "../Home";
 import { Room } from "../../types/Room";
 
 const webRTC = new WebRTC(webSocketsSignalling);
 
-const startSignallingServer = () => {
-    webSocketsSignalling.answerMade(webRTC.getPeerConnection());
+const startSignallingServer = (fetchParticipantData: () => Promise<void>) => {
+    webSocketsSignalling.answerMade(webRTC.getPeerConnection(), fetchParticipantData);
+
+    webSocketsSignalling.listenForIceCandidate(webRTC.getPeerConnection());
 };
 
 export default function Index() {
@@ -21,40 +22,38 @@ export default function Index() {
     const remoteParticipantVideo = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
-        // startSignallingServer();
+        const fetchParticipantData = async () => {
+            const thisParticipant = await fetch(`${import.meta.env.VITE_BACKEND_URL}/participants/${params.id}`);
 
-        // const fetchParticipantData = async () => {
-        //     const thisParticipant = await fetch(`${import.meta.env.VITE_BACKEND_URL}/participants/${params.id}`);
+            if (thisParticipant.ok) {
+                const data: Participant[] = await thisParticipant.json();
 
-        //     if (thisParticipant.ok) {
-        //         const data: Participant[] = await thisParticipant.json();
+                // Caller participant screen
+                if (data[0].socketId === webSocketsSignalling.getUserId()) {
+                    if (data.length >= 1 && data[0]) {
+                        setThisParticipant(data[0]);
+                    }
 
-        //         // Caller participant screen
-        //         if (data[0].socketId === webSocketsSignalling.getUserId()) {
-        //             if (data.length >= 1 && data[0]) {
-        //                 setThisParticipant(data[0]);
-        //             }
+                    if (data.length == 2 && data[1]) {
+                        setRemoteParticipant(data[1]);
+                    }
+                }
+                //Remote participant screen
+                else {
+                    if (data.length >= 1 && data[0]) {
+                        setRemoteParticipant(data[0]);
+                    }
 
-        //             if (data.length == 2 && data[1]) {
-        //                 setRemoteParticipant(data[1]);
-        //             }
-        //         }
-        //         //Remote participant screen
-        //         else {
-        //             if (data.length >= 1 && data[0]) {
-        //                 setRemoteParticipant(data[0]);
-        //             }
+                    if (data.length == 2 && data[1]) {
+                        setThisParticipant(data[1]);
+                    }
+                }
+            }
+        };
 
-        //             if (data.length == 2 && data[1]) {
-        //                 setThisParticipant(data[1]);
-        //             }
-        //         }
-        //     }
-        // };
+        startSignallingServer(fetchParticipantData);
 
-        // fetchParticipantData();
-
-        webSocketsSignalling.answerMade(webRTC.getPeerConnection());
+        fetchParticipantData();
 
         const negotiateWebRTC = async () => {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${params.id}`);
@@ -101,14 +100,14 @@ export default function Index() {
                     {thisParticipantVideo && (
                         <div>
                             <video autoPlay={true} controls={false} ref={thisParticipantVideo} />
-                            {/* {thisParticipant.id} - {thisParticipant.role} */}
+                            {thisParticipant && thisParticipant.role}
                         </div>
                     )}
 
                     {remoteParticipantVideo && (
                         <div>
                             <video autoPlay={true} controls={false} ref={remoteParticipantVideo} />
-                            {/* {remoteParticipant.id} - {remoteParticipant.role} */}
+                            {remoteParticipant && remoteParticipant.role}
                         </div>
                     )}
                 </div>

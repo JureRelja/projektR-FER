@@ -49,12 +49,8 @@ function App() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}`, {
-                body: JSON.stringify({ socketId: webSocketsSignalling.getUserId() }),
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}?socketId=${webSocketsSignalling.getUserId()}`, {
                 method: "POST",
-                headers: {
-                    "Content-type": "application/json",
-                },
             });
 
             const joinnedRoom: Room | null = await response.json();

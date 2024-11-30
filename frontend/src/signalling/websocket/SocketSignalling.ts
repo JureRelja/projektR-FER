@@ -9,9 +9,9 @@ export class WebSocketSignalling implements Signalling {
         this.socket = socket;
     }
 
-    joinRoom(roomId: string): void {
+    joinRoom(roomUUID: string): void {
         this.socket.emit("joinRoom", {
-            roomId: roomId,
+            roomUUID: roomUUID,
         });
     }
 
@@ -41,10 +41,14 @@ export class WebSocketSignalling implements Signalling {
         this.socket.on("answerMade", async (data) => {
             console.log("answerMade", data);
 
-            if (data.caleeSocketId != this.socket.id) {
+            if (data.caleeSocketId != this.socket.id && !peerConnection.remoteDescription) {
                 console.log("connecting " + data.caleeSocketId + " and " + this.socket.id);
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
             }
         });
+    }
+
+    removeAnswerMade(): void {
+        this.socket.off("answerMade");
     }
 }

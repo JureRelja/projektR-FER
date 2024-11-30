@@ -1,4 +1,3 @@
-import { Ref } from "react";
 import { Signalling } from "./signalling/Signalling";
 
 const servers = {
@@ -26,7 +25,7 @@ export class WebRTC {
 
     private async getUserMedia(): Promise<MediaStream | undefined> {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             return stream;
         } catch (error) {
             console.error("Error accessing media devices.", error);
@@ -42,6 +41,7 @@ export class WebRTC {
 
         if (thisParticipantVideo.current) {
             thisParticipantVideo.current.srcObject = stream;
+            thisParticipantVideo.current.muted = true;
         }
 
         //Adding local tracks to peerConnection
@@ -84,11 +84,11 @@ export class WebRTC {
         thisParticipantVideo: React.RefObject<HTMLVideoElement>,
         remoteParticipantVideo: React.RefObject<HTMLVideoElement>,
     ): Promise<RTCSessionDescriptionInit | null> {
+        await this.createConnection(thisParticipantVideo, remoteParticipantVideo);
+
         const offer: RTCSessionDescriptionInit = await this.peerConnection.createOffer();
 
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(offer));
-
-        this.createConnection(thisParticipantVideo, remoteParticipantVideo);
 
         return offer;
     }
@@ -99,12 +99,12 @@ export class WebRTC {
         sdp: string,
         sdpType: RTCSdpType,
     ): Promise<RTCSessionDescriptionInit | null> {
+        await this.createConnection(thisParticipantVideo, remoteParticipantVideo);
+
         await this.peerConnection.setRemoteDescription(new RTCSessionDescription({ sdp: sdp, type: sdpType }));
 
         const answer = await this.peerConnection.createAnswer();
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
-
-        this.createConnection(thisParticipantVideo, remoteParticipantVideo);
 
         return answer;
     }

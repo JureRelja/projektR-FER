@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { RoomRepository } from "./RoomRepository";
 import { RoomEntity } from "./entities/Room.entity";
-import { Server, Socket } from "socket.io";
+import { Socket } from "socket.io";
 import { ParticipantRepository } from "src/participants/ParticipantRepository";
 import { ParticipantEntity } from "src/participants/entities/participant.entity";
 import { CreateRoomDto } from "./dto/CreateRoomDto";
@@ -56,14 +56,16 @@ export class RoomService {
         return true;
     }
 
-    public recieveIceCandidate(candidate: { iceCandidate: RTCIceCandidate }, client: Socket, server: Server): void {
+    public recieveIceCandidate(candidate: { iceCandidate: RTCIceCandidate }, client: Socket): void {
         const rooms: string[] = Array.from(client.rooms);
         console.log("emitting ice candidate");
-        server.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
+        client.broadcast.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
+
+        // server.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
     }
 
-    emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket, server: Server, roomUUID: string): void {
+    emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket, roomUUID: string): void {
         console.log("emitting answerMade");
-        server.to(roomUUID).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
+        answerer.broadcast.to(roomUUID).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
     }
 }

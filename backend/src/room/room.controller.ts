@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post, Query } from "@nestjs/common";
 import { RoomService } from "./room.service";
 import { RoomEntity } from "./entities/Room.entity";
 import { CreateRoomDto } from "./dto/CreateRoomDto";
@@ -7,6 +7,11 @@ import { UpdateRoomDto } from "./dto/UpdateRoom";
 @Controller("/rooms")
 export class RoomController {
     constructor(private readonly roomService: RoomService) {}
+
+    @Get("/:roomId")
+    async getRoom(@Param("roomId") roomUUID: string): Promise<RoomEntity | null> {
+        return await this.roomService.getRoom(roomUUID);
+    }
 
     @Post("/create")
     async createRoom(@Body() createRoomDto: CreateRoomDto): Promise<RoomEntity> {

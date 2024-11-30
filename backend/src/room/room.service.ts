@@ -14,6 +14,10 @@ export class RoomService {
         private readonly participantRepository: ParticipantRepository,
     ) {}
 
+    async getRoom(roomUUID: string): Promise<RoomEntity | null> {
+        return await this.roomRepository.getRoomByUUID(roomUUID);
+    }
+
     async createRoom(createRoomDto: CreateRoomDto): Promise<RoomEntity> {
         const newRoom: RoomEntity = await this.roomRepository.createRoom(createRoomDto.socketId);
 

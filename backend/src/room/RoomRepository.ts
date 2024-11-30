@@ -7,6 +7,14 @@ import { Role } from "@prisma/client";
 export class RoomRepository {
     constructor() {}
 
+    public async getRoomByUUID(roomUUID: string): Promise<RoomEntity | null> {
+        return await db.room.findUnique({
+            where: {
+                uuid: roomUUID,
+            },
+        });
+    }
+
     public async getRoomById(roomId: number): Promise<RoomEntity | null> {
         return await db.room.findUnique({
             where: {

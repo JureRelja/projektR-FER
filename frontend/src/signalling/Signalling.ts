@@ -3,6 +3,8 @@ export interface Signalling {
 
     getUserId(): string;
 
+    emitAnswer(answer: RTCSessionDescriptionInit, roomUUID: string): void;
+
     answerMade(peerConnection: RTCPeerConnection): void;
 
     emitIceCandidate(data: { iceCandidate: RTCIceCandidate }): void;

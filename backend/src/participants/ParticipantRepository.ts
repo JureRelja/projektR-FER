@@ -7,22 +7,28 @@ import { Participant, Role } from "@prisma/client";
 export class ParticipantRepository {
     constructor() {}
 
-    public async getParticipants(roomId: number): Promise<ParticipantEntity[]> {
+    public async getParticipants(roomUUID: string): Promise<ParticipantEntity[]> {
         const participants: ParticipantEntity[] = await db.participant.findMany({
             where: {
-                roomId: roomId,
+                room: {
+                    uuid: roomUUID,
+                },
             },
         });
 
         return participants;
     }
 
-    public async createParticipant(roomId: number, socketId: string): Promise<Participant> {
+    public async createParticipant(roomUUID: string, socketId: string): Promise<Participant> {
         const newParticipant: Participant = await db.participant.create({
             data: {
                 role: Role.PARTICIPANT,
                 socketId: socketId,
-                roomId: roomId,
+                room: {
+                    connect: {
+                        uuid: roomUUID,
+                    },
+                },
             },
         });
 

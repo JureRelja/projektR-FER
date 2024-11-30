@@ -24,31 +24,31 @@ export class RoomService {
         return newRoom;
     }
 
-    async updateRoomSdp(roomId: number, updateRoomDto: UpdateRoomDto): Promise<RoomEntity | null> {
-        return await this.roomRepository.updateRoomSdp(roomId, { sdp: updateRoomDto.sdpOffer, type: updateRoomDto.sdpType as RTCSdpType });
+    async updateRoomSdp(roomUUID: string, updateRoomDto: UpdateRoomDto): Promise<RoomEntity | null> {
+        return await this.roomRepository.updateRoomSdp(roomUUID, { sdp: updateRoomDto.sdpOffer, type: updateRoomDto.sdpType as RTCSdpType });
     }
 
-    async joinRoom(roomId: number, socketId: string): Promise<RoomEntity | null> {
-        if (await this.canJoinRoom(roomId)) {
-            await this.participantRepository.createParticipant(roomId, socketId);
-            return this.roomRepository.getRoomById(roomId);
+    async joinRoom(roomUUID: string, socketId: string): Promise<RoomEntity | null> {
+        if (await this.canJoinRoom(roomUUID)) {
+            await this.participantRepository.createParticipant(roomUUID, socketId);
+            return this.roomRepository.getRoomByUUID(roomUUID);
         }
 
         return null;
     }
 
-    async socketJoinRoom(roomId: number, client: Socket): Promise<boolean> {
-        if (!client.rooms.has(roomId.toString())) {
-            await client.join(roomId.toString());
+    async socketJoinRoom(roomUUID: string, client: Socket): Promise<boolean> {
+        if (!client.rooms.has(roomUUID)) {
+            await client.join(roomUUID);
 
-            console.log("Client " + client.id + " joined room: " + roomId);
+            console.log("Client " + client.id + " joined room: " + roomUUID);
         }
 
         return true;
     }
 
-    private async canJoinRoom(roomId: number): Promise<boolean> {
-        const peopleInRoom: ParticipantEntity[] = await this.participantRepository.getParticipants(roomId);
+    private async canJoinRoom(roomUUID: string): Promise<boolean> {
+        const peopleInRoom: ParticipantEntity[] = await this.participantRepository.getParticipants(roomUUID);
 
         if (peopleInRoom.length >= 2) {
             return false;
@@ -62,8 +62,8 @@ export class RoomService {
         server.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
     }
 
-    emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket, server: Server, roomId: number): void {
+    emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket, server: Server, roomUUID: string): void {
         console.log("emitting answerMade");
-        server.to(roomId.toString()).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
+        server.to(roomUUID).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
     }
 }

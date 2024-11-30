@@ -6,11 +6,11 @@ import { ParticipantRepository } from "./ParticipantRepository";
 export class ParticipantsService {
     constructor(private readonly participantRepository: ParticipantRepository) {}
 
-    async findMany(roomId: number): Promise<ParticipantEntity[]> {
-        return this.participantRepository.getParticipants(roomId);
+    async findMany(roomUUID: string): Promise<ParticipantEntity[]> {
+        return this.participantRepository.getParticipants(roomUUID);
     }
 
-    async createParticipant(roomId: number, socketId: string): Promise<ParticipantEntity> {
-        return await this.participantRepository.createParticipant(roomId, socketId);
+    async createParticipant(roomUUID: string, socketId: string): Promise<ParticipantEntity> {
+        return await this.participantRepository.createParticipant(roomUUID, socketId);
     }
 }

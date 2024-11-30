@@ -6,8 +6,8 @@ import { ParticipantEntity } from "./entities/participant.entity";
 export class ParticipantsController {
     constructor(private readonly participantsService: ParticipantsService) {}
 
-    @Get(":roomId")
-    async findManyByRoomId(@Param("roomId") roomId: number): Promise<ParticipantEntity[]> {
-        return this.participantsService.findMany(roomId);
+    @Get(":roomUUID")
+    async findManyByRoomUUID(@Param("roomUUID") roomUUID: string): Promise<ParticipantEntity[]> {
+        return this.participantsService.findMany(roomUUID);
     }
 }

@@ -18,13 +18,13 @@ export class RoomController {
         return await this.roomService.createRoom(createRoomDto);
     }
 
-    @Post("/:roomId")
-    async joinRoom(@Param("roomId") roomId: number, @Query("socketId") socketId: string): Promise<RoomEntity | null> {
-        return await this.roomService.joinRoom(roomId, socketId);
+    @Post("/:roomUUID")
+    async joinRoom(@Param("roomUUID") roomUUID: string, @Query("socketId") socketId: string): Promise<RoomEntity | null> {
+        return await this.roomService.joinRoom(roomUUID, socketId);
     }
 
-    @Patch("/:roomId")
-    async updateRoom(@Param("roomId") roomId: number, @Body() updateRoomDto: UpdateRoomDto): Promise<RoomEntity | null> {
-        return this.roomService.updateRoomSdp(roomId, updateRoomDto);
+    @Patch("/:roomUUID")
+    async updateRoom(@Param("roomUUID") roomUUID: string, @Body() updateRoomDto: UpdateRoomDto): Promise<RoomEntity | null> {
+        return this.roomService.updateRoomSdp(roomUUID, updateRoomDto);
     }
 }

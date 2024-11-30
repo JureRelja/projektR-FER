@@ -10,13 +10,13 @@ export class RoomWsGateway {
     constructor(private readonly roomService: RoomService) {}
 
     @SubscribeMessage("makeAnswer")
-    answerCall(@MessageBody() callAnswer: { roomId: number; answer: RTCSessionDescriptionInit }, @ConnectedSocket() answerClient: Socket): void {
-        this.roomService.emitCallAnswer(callAnswer.answer, answerClient, this.server, callAnswer.roomId);
+    answerCall(@MessageBody() callAnswer: { roomUUID: string; answer: RTCSessionDescriptionInit }, @ConnectedSocket() answerClient: Socket): void {
+        this.roomService.emitCallAnswer(callAnswer.answer, answerClient, this.server, callAnswer.roomUUID);
     }
 
     @SubscribeMessage("joinRoom")
-    async joinRoom(@MessageBody() room: { roomId: number }, @ConnectedSocket() client: Socket): Promise<void> {
-        this.roomService.socketJoinRoom(room.roomId, client);
+    async joinRoom(@MessageBody() room: { roomUUID: string }, @ConnectedSocket() client: Socket): Promise<void> {
+        this.roomService.socketJoinRoom(room.roomUUID, client);
     }
 
     @SubscribeMessage("iceCandidate")

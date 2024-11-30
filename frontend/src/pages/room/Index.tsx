@@ -37,8 +37,6 @@ export default function Index() {
                     if (data.length == 2 && data[1]) {
                         setRemoteParticipant(data[1]);
                     }
-
-                    webRTC.createAndSendOffer(thisParticipantVideo, remoteParticipantVideo);
                 }
                 //Remote participant screen
                 else {
@@ -63,9 +61,28 @@ export default function Index() {
             console.log(data);
 
             if (data.sdp && data.sdpType) {
-                webRTC.createAndSendAnswer(thisParticipantVideo, remoteParticipantVideo, data.sdp, data.sdpType);
+                const answer = await webRTC.createAndSendAnswer(thisParticipantVideo, remoteParticipantVideo, data.sdp, data.sdpType);
+
+                if (answer) {
+                    webSocketsSignalling.emitAnswer(answer, params.id as string);
+                }
             } else {
-                webRTC.createAndSendOffer(thisParticipantVideo, remoteParticipantVideo);
+                const offer = await webRTC.createAndSendOffer(thisParticipantVideo, remoteParticipantVideo);
+
+                if (offer?.sdp && offer.type) {
+                    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${params.id}`, {
+                        method: "PATCH",
+                        body: JSON.stringify({
+                            sdpOffer: offer.sdp,
+                            sdpType: offer.type,
+                        }),
+                        headers: {
+                            "Content-type": "application/json",
+                        },
+                    });
+
+                    const data: Room[] = await response.json();
+                }
             }
         };
 

@@ -33,6 +33,10 @@ export class WebSocketSignalling implements Signalling {
         });
     }
 
+    emitAnswer(answer: RTCSessionDescriptionInit, roomUUID: string): void {
+        this.socket.emit("makeAnswer", { roomUUID: roomUUID, answer: answer });
+    }
+
     answerMade(peerConnection: RTCPeerConnection): void {
         this.socket.on("answerMade", async (data) => {
             console.log("answerMade", data);

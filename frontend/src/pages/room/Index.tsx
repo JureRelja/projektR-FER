@@ -266,7 +266,7 @@ export default function Index() {
     const [message, setMessage] = useState("");
 
     const sendMessageHandler = () => {
-        webSocketsSignalling.emitMessage(message, params.id as string);
+        webSocketsSignalling.emitMessage(message, thisParticipant?.name as string, params.id as string);
         setMessage("");
     };
 

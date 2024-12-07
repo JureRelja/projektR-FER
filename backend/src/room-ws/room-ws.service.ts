@@ -28,6 +28,6 @@ export class RoomWsService {
 
     sendMessage(message: { message: string; name: string; roomUUID: string }, client: Socket): void {
         console.log("emitting message");
-        client.broadcast.to(message.roomUUID).emit("message", { message: message.message, name: message.name, socketId: client.id });
+        client.broadcast.to(message.roomUUID).emit("message", { message: message.message, name: message.name, socketId: client.id, id: Date.now() });
     }
 }

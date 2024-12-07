@@ -100,14 +100,14 @@ export default function Index() {
                     {thisParticipantVideo && (
                         <div className="h-full w-full">
                             <video autoPlay={true} controls={false} ref={thisParticipantVideo} />
-                            {thisParticipant && <p className="text-center">{thisParticipant.role}</p>}
+                            {thisParticipant && <p className="text-center">{thisParticipant.name}</p>}
                         </div>
                     )}
 
                     {remoteParticipantVideo && (
                         <div className="h-full w-full">
                             <video autoPlay={true} controls={false} ref={remoteParticipantVideo} />
-                            {remoteParticipant && <p className="text-center">{remoteParticipant.role}</p>}
+                            {remoteParticipant && <p className="text-center">{remoteParticipant.name}</p>}
                         </div>
                     )}
                 </div>

@@ -9,12 +9,12 @@ import { Message } from "../../types/Message";
 
 const webRTC = new WebRTC(webSocketsSignalling);
 
-const startSignallingServer = (fetchParticipantData: () => Promise<void>) => {
+const startSignallingServer = (fetchParticipantData: () => Promise<void>, handleNewMessage: (message: Message) => void) => {
     webSocketsSignalling.answerMade(webRTC.getPeerConnection(), fetchParticipantData);
 
     webSocketsSignalling.listenForIceCandidate(webRTC.getPeerConnection());
 
-    webSocketsSignalling.listenForMessage();
+    webSocketsSignalling.listenForMessage(handleNewMessage);
 };
 
 const messages_test = [
@@ -187,8 +187,39 @@ export default function Index() {
     const [thisParticipant, setThisParticipant] = useState<Participant>();
     const thisParticipantVideo = useRef<HTMLVideoElement>(null);
 
+    // Video
     const [remoteParticipant, setRemoteParticipant] = useState<Participant>();
     const remoteParticipantVideo = useRef<HTMLVideoElement>(null);
+
+    // Chat
+    const [message, setMessage] = useState<string>("");
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    const sendMessageHandler = () => {
+        const messageForSending: Message = {
+            id: Date.now(),
+            message: message,
+            name: thisParticipant?.name as string,
+            socketId: thisParticipant?.socketId as string,
+            roomUUID: params.id as string,
+        };
+
+        webSocketsSignalling.emitMessage(messageForSending);
+
+        setMessages((prev) => [...prev, messageForSending]);
+
+        setMessage("");
+    };
+
+    const handleNewMessage = (message: Message) => {
+        setMessages((prev) => {
+            if (prev.find((msg) => msg.id === message.id)) {
+                return prev;
+            } else {
+                return [...prev, message];
+            }
+        });
+    };
 
     useEffect(() => {
         if (!params.id) {
@@ -224,7 +255,7 @@ export default function Index() {
             }
         };
 
-        startSignallingServer(fetchParticipantData);
+        startSignallingServer(fetchParticipantData, handleNewMessage);
 
         fetchParticipantData();
 
@@ -266,22 +297,6 @@ export default function Index() {
         };
     }, []);
 
-    const [message, setMessage] = useState<string>("");
-    const [messages, setMessages] = useState<Message[]>([]);
-
-    const sendMessageHandler = () => {
-        const messageForSending: Message = {
-            id: Date.now(),
-            message: message,
-            name: thisParticipant?.name as string,
-            socketId: thisParticipant?.socketId as string,
-            roomUUID: params.id as string,
-        };
-        webSocketsSignalling.emitMessage(messageForSending);
-        setMessages([...messages, messageForSending]);
-        setMessage("");
-    };
-
     return (
         <div className="flex h-full gap-10 justify-between items-center">
             <div className="flex flex-col gap-5 justify-center items-center">
@@ -303,7 +318,7 @@ export default function Index() {
             </div>
 
             {/* Chat */}
-            <div className="flex flex-col w-[400px] h-full py-2 border-2 border-gray-200">
+            <div className="flex flex-col w-[450px] h-full py-2 border-2 border-gray-200">
                 <div className="h-[500px] flex flex-col gap-2 overflow-y-auto px-2">
                     {messages.map((message) => {
                         return (

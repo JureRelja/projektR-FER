@@ -24,9 +24,9 @@ export class WebSocketSignalling implements Signalling {
         this.socket.emit("message", message);
     }
 
-    listenForMessage(): void {
+    listenForMessage(handleNewMessage: (message: Message) => void): void {
         this.socket.on("message", (message: Message) => {
-            console.log(message);
+            handleNewMessage(message);
         });
     }
 

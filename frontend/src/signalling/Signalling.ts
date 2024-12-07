@@ -7,7 +7,7 @@ export interface Signalling {
 
     emitMessage(message: Message): void;
 
-    listenForMessage(): void;
+    listenForMessage(handleNewMessage: (message: Message) => void): void;
 
     emitAnswer(answer: RTCSessionDescriptionInit, roomUUID: string): void;
 

@@ -195,7 +195,9 @@ export default function Index() {
     const [message, setMessage] = useState<string>("");
     const [messages, setMessages] = useState<Message[]>([]);
 
-    const sendMessageHandler = () => {
+    const sendMessageHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
         const messageForSending: Message = {
             id: Date.now(),
             message: message,
@@ -325,7 +327,7 @@ export default function Index() {
                             <div key={message.id} className={`flex ${message.socketId === thisParticipant?.socketId ? "justify-end" : "justify-start"} items-center gap-2`}>
                                 <div className="flex flex-col">
                                     <p className={`underline ${message.socketId === thisParticipant?.socketId ? "text-end" : "text-start"}`}>
-                                        {message.socketId === thisParticipant?.socketId ? thisParticipant?.name : remoteParticipant?.name}
+                                        {message.socketId === thisParticipant?.socketId ? "Vi" : remoteParticipant?.name}
                                     </p>
                                     <p className=" border-2 border-gray-200 p-2 rounded-md">{message.message}</p>{" "}
                                 </div>
@@ -333,7 +335,8 @@ export default function Index() {
                         );
                     })}
                 </div>
-                <div className="flex justify-between gap-2 items-center p-2 border-t-2 border-gray-200">
+
+                <form className="flex justify-between gap-2 items-center p-2 border-t-2 border-gray-200">
                     <input
                         className="border-2 px-3 py-[6px] rounded-md border-gray-400 w-full"
                         type="text"
@@ -341,8 +344,13 @@ export default function Index() {
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                     />
-                    <Button label="Send" onClick={sendMessageHandler} />
-                </div>
+                    <Button
+                        label="Send"
+                        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+                            sendMessageHandler(event);
+                        }}
+                    />
+                </form>
             </div>
         </div>
     );

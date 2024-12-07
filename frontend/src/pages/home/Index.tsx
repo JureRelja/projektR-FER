@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Signalling } from "../../signalling/Signalling";
 import { WebSocketSignalling } from "../../signalling/websocket/SocketSignalling";
 import { Room } from "../../types/Room";
+import { MoonLoader } from "react-spinners";
 
 export const webSocketsSignalling: Signalling = new WebSocketSignalling(socket);
 
@@ -13,6 +14,11 @@ function App() {
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState<boolean>(false);
+    const [name, setName] = useState<string>("");
+
+    const nameHandler = (e: React.ChangeEvent<HTMLInputElement>): void => {
+        setName(e.target.value);
+    };
 
     //Create new room - start
     const roomCreateHandler = async (): Promise<void> => {
@@ -20,7 +26,7 @@ function App() {
 
         try {
             const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/create`, {
-                body: JSON.stringify({ socketId: webSocketsSignalling.getUserId() }),
+                body: JSON.stringify({ socketId: webSocketsSignalling.getUserId(), name: name }),
                 method: "POST",
                 headers: {
                     "Content-type": "application/json",
@@ -49,8 +55,12 @@ function App() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}?socketId=${webSocketsSignalling.getUserId()}`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}}`, {
                 method: "POST",
+                body: JSON.stringify({ socketId: webSocketsSignalling.getUserId(), name: name }),
+                headers: {
+                    "Content-type": "application/json",
+                },
             });
 
             const joinnedRoom: Room | null = await response.json();
@@ -69,24 +79,44 @@ function App() {
         <div className="flex flex-col gap-12 w-full">
             <div className="flex flex-col gap-5 justify-center items-center">
                 <h2 className="text-2xl text-center">Novi poziv</h2>
+                <input
+                    className="border-2 rounded-sm px-3 py-2 border-gray-400 w-[400px]"
+                    type="text"
+                    value={name}
+                    placeholder="Unesite svoje ime, npr. Marko"
+                    onChange={nameHandler}
+                />
                 <Button label="Novi poziv" onClick={roomCreateHandler} />
             </div>
 
-            <div className="flex flex-col gap-5 justify-center">{loading && <p className="text-center">Učitavanje...</p>}</div>
+            {loading && (
+                <div className="bg-gray-400 w-full opacity-40 h-full absolute top-0 left-0 z-2">
+                    <div className="flex flex-col gap-5 justify-center absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-10">
+                        <MoonLoader />
+                    </div>
+                </div>
+            )}
             <Divider />
 
-            <div className="flex flex-col gap-5 justify-center">
+            <div className="flex flex-col gap-5 justify-center items-center">
                 <h2 className="text-2xl text-center">Pridruži se postojećem pozivu</h2>
+
                 <input
-                    className="border-2 rounded-sm px-3 py-2 border-gray-400"
+                    className="border-2 rounded-sm px-3 py-2 border-gray-400 w-[400px]"
+                    type="text"
+                    value={name}
+                    placeholder="Unesite svoje ime, npr. Marko"
+                    onChange={nameHandler}
+                />
+                <input
+                    className="border-2 rounded-sm px-3 py-2 border-gray-400 w-[400px]"
                     type="text"
                     value={roomCode}
                     placeholder="Unesite kod poziva, npr. f20jf04j043f0344fj0"
                     onChange={roomCodeHandler}
                 />
-                <div className="flex flex-col justify-end items-center">
-                    <Button label="Pridruži se " onClick={roomJoinHandler} />
-                </div>
+
+                <Button label="Pridruži se" onClick={roomJoinHandler} />
             </div>
         </div>
     );

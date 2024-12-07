@@ -26,8 +26,8 @@ export class RoomWsService {
         answerer.broadcast.to(roomUUID).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
     }
 
-    sendMessage(message: { message: string; roomUUID: string }, client: Socket): void {
+    sendMessage(message: { message: string; name: string; roomUUID: string }, client: Socket): void {
         console.log("emitting message");
-        client.broadcast.to(message.roomUUID).emit("message", message);
+        client.broadcast.to(message.roomUUID).emit("message", { message: message.message, name: message.name, socketId: client.id });
     }
 }

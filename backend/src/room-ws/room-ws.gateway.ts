@@ -22,7 +22,7 @@ export class RoomWsGateway {
     }
 
     @SubscribeMessage("message")
-    async gotMessage(@MessageBody() message: { message: string; roomUUID: string }, @ConnectedSocket() client: Socket): Promise<void> {
+    async gotMessage(@MessageBody() message: { message: string; name: string; roomUUID: string }, @ConnectedSocket() client: Socket): Promise<void> {
         this.roomWsService.sendMessage(message, client);
     }
 }

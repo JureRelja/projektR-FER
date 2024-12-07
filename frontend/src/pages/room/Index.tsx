@@ -5,6 +5,7 @@ import { WebRTC } from "../../WebRTC";
 import { webSocketsSignalling } from "../Home";
 import { Room } from "../../types/Room";
 import Button from "../../components/Button";
+import { Message } from "../../types/Message";
 
 const webRTC = new WebRTC(webSocketsSignalling);
 
@@ -12,9 +13,11 @@ const startSignallingServer = (fetchParticipantData: () => Promise<void>) => {
     webSocketsSignalling.answerMade(webRTC.getPeerConnection(), fetchParticipantData);
 
     webSocketsSignalling.listenForIceCandidate(webRTC.getPeerConnection());
+
+    webSocketsSignalling.listenForMessage();
 };
 
-const messages = [
+const messages_test = [
     {
         id: 1,
         message: "Hello",
@@ -264,9 +267,12 @@ export default function Index() {
     }, []);
 
     const [message, setMessage] = useState("");
+    const [messages, setMessages] = useState<Message[]>([]);
 
     const sendMessageHandler = () => {
         webSocketsSignalling.emitMessage(message, thisParticipant?.name as string, params.id as string);
+
+        setMessages([...messages, { id: Date.now(), message: message, name: thisParticipant?.name as string, socketId: thisParticipant?.socketId as string }]);
         setMessage("");
     };
 
@@ -295,10 +301,10 @@ export default function Index() {
                 <div className="h-[500px] flex flex-col gap-2 overflow-y-auto px-2">
                     {messages.map((message) => {
                         return (
-                            <div key={message.id} className={`flex ${message.senderId === "1" ? "justify-end" : "justify-start"} items-center gap-2`}>
+                            <div key={message.id} className={`flex ${message.socketId === thisParticipant?.socketId ? "justify-end" : "justify-start"} items-center gap-2`}>
                                 <div className="flex flex-col">
-                                    <p className={`underline ${message.senderId === "1" ? "text-end" : "text-start"}`}>
-                                        {message.senderId === "1" ? thisParticipant?.name : remoteParticipant?.name}
+                                    <p className={`underline ${message.socketId === thisParticipant?.socketId ? "text-end" : "text-start"}`}>
+                                        {message.socketId === thisParticipant?.socketId ? thisParticipant?.name : remoteParticipant?.name}
                                     </p>
                                     <p className=" border-2 border-gray-200 p-2 rounded-md">{message.message}</p>{" "}
                                 </div>

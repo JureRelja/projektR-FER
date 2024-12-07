@@ -258,6 +258,8 @@ export default function Index() {
         };
     }, []);
 
+    const [message, setMessage] = useState("");
+
     const sendMessageHandler = () => {
         console.log("Message sent");
     };
@@ -283,17 +285,22 @@ export default function Index() {
             </div>
 
             <div className="flex flex-col w-[400px] h-full py-2 border-2 border-gray-200">
-                <div className="h-full flex flex-col gap-2 overflow-y-auto px-2">
+                <div className="h-[500px] flex flex-col gap-2 overflow-y-auto px-2">
                     {messages.map((message) => {
                         return (
                             <div key={message.id} className={`flex ${message.senderId === "1" ? "justify-end" : "justify-start"} items-center gap-2`}>
-                                <p className=" border-2 border-gray-200 p-2 rounded-md">{message.message}</p>{" "}
+                                <div className="flex flex-col">
+                                    <p className={`underline ${message.senderId === "1" ? "text-end" : "text-start"}`}>
+                                        {message.senderId === "1" ? thisParticipant?.name : remoteParticipant?.name}
+                                    </p>
+                                    <p className=" border-2 border-gray-200 p-2 rounded-md">{message.message}</p>{" "}
+                                </div>
                             </div>
                         );
                     })}
                 </div>
                 <div className="flex justify-between gap-2 items-center p-2 border-t-2 border-gray-200">
-                    <input className="border-2 px-3 py-[6px] rounded-md border-gray-400 w-full" type="text" placeholder="Poruka..." />
+                    <input className="border-2 px-3 py-[6px] rounded-md border-gray-400 w-full" type="text" placeholder="Poruka..." value={message} />
                     <Button label="Send" onClick={sendMessageHandler} />
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { ParticipantEntity } from "./entities/participant.entity";
 import { ParticipantRepository } from "./ParticipantRepository";
+import { CreateParticipantDto } from "./dto/CreateParticipantDto";
 
 @Injectable()
 export class ParticipantsService {
@@ -10,7 +11,7 @@ export class ParticipantsService {
         return this.participantRepository.getParticipants(roomUUID);
     }
 
-    async createParticipant(roomUUID: string, socketId: string): Promise<ParticipantEntity> {
-        return await this.participantRepository.createParticipant(roomUUID, socketId);
+    async createParticipant(roomUUID: string, createParticipantDto: CreateParticipantDto): Promise<ParticipantEntity> {
+        return await this.participantRepository.createParticipant(createParticipantDto.name, createParticipantDto.socketId, roomUUID);
     }
 }

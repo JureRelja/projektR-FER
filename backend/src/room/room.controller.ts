@@ -1,8 +1,8 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Patch, Post } from "@nestjs/common";
 import { RoomService } from "./room.service";
 import { RoomEntity } from "./entities/Room.entity";
-import { CreateRoomDto } from "./dto/CreateRoomDto";
 import { UpdateRoomDto } from "./dto/UpdateRoom";
+import { CreateParticipantDto } from "../participants/dto/CreateParticipantDto";
 
 @Controller("/rooms")
 export class RoomController {
@@ -14,13 +14,13 @@ export class RoomController {
     }
 
     @Post("/create")
-    async createRoom(@Body() createRoomDto: CreateRoomDto): Promise<RoomEntity> {
-        return await this.roomService.createRoom(createRoomDto);
+    async createRoom(@Body() createParticipant: CreateParticipantDto): Promise<RoomEntity> {
+        return await this.roomService.createRoom(createParticipant);
     }
 
     @Post("/:roomUUID")
-    async joinRoom(@Param("roomUUID") roomUUID: string, @Query("socketId") socketId: string): Promise<RoomEntity | null> {
-        return await this.roomService.joinRoom(roomUUID, socketId);
+    async joinRoom(@Param("roomUUID") roomUUID: string, @Body() createParticipant: CreateParticipantDto): Promise<RoomEntity | null> {
+        return await this.roomService.joinRoom(roomUUID, createParticipant);
     }
 
     @Patch("/:roomUUID")

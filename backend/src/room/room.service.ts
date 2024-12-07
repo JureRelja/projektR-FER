@@ -6,6 +6,7 @@ import { ParticipantRepository } from "src/participants/ParticipantRepository";
 import { ParticipantEntity } from "src/participants/entities/participant.entity";
 import { CreateRoomDto } from "./dto/CreateRoomDto";
 import { UpdateRoomDto } from "./dto/UpdateRoom";
+import { CreateParticipantDto } from "src/participants/dto/CreateParticipantDto";
 
 @Injectable()
 export class RoomService {
@@ -19,7 +20,7 @@ export class RoomService {
     }
 
     async createRoom(createRoomDto: CreateRoomDto): Promise<RoomEntity> {
-        const newRoom: RoomEntity = await this.roomRepository.createRoom(createRoomDto.socketId);
+        const newRoom: RoomEntity = await this.roomRepository.createRoom(createRoomDto.socketId, createRoomDto.name);
 
         return newRoom;
     }
@@ -28,9 +29,9 @@ export class RoomService {
         return await this.roomRepository.updateRoomSdp(roomUUID, { sdp: updateRoomDto.sdpOffer, type: updateRoomDto.sdpType as RTCSdpType });
     }
 
-    async joinRoom(roomUUID: string, socketId: string): Promise<RoomEntity | null> {
+    async joinRoom(roomUUID: string, createParticipant: CreateParticipantDto): Promise<RoomEntity | null> {
         if (await this.canJoinRoom(roomUUID)) {
-            await this.participantRepository.createParticipant(roomUUID, socketId);
+            await this.participantRepository.createParticipant(createParticipant.name, createParticipant.socketId, roomUUID);
             return this.roomRepository.getRoomByUUID(roomUUID);
         }
 

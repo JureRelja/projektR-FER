@@ -23,11 +23,12 @@ export class RoomRepository {
         });
     }
 
-    public async createRoom(socketId: string): Promise<RoomEntity> {
+    public async createRoom(socketId: string, name: string): Promise<RoomEntity> {
         const newRoom: RoomEntity = await db.room.create({
             data: {
                 participants: {
                     create: {
+                        name: name,
                         socketId: socketId,
                         role: Role.MODERATOR,
                     },

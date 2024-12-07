@@ -98,16 +98,16 @@ export default function Index() {
             <div className="flex flex-col gap-5 justify-center items-center">
                 <div className="flex gap-2">
                     {thisParticipantVideo && (
-                        <div>
+                        <div className="h-full w-full">
                             <video autoPlay={true} controls={false} ref={thisParticipantVideo} />
-                            {thisParticipant && thisParticipant.role}
+                            {thisParticipant && <p className="text-center">{thisParticipant.role}</p>}
                         </div>
                     )}
 
                     {remoteParticipantVideo && (
-                        <div>
+                        <div className="h-full w-full">
                             <video autoPlay={true} controls={false} ref={remoteParticipantVideo} />
-                            {remoteParticipant && remoteParticipant.role}
+                            {remoteParticipant && <p className="text-center">{remoteParticipant.role}</p>}
                         </div>
                     )}
                 </div>

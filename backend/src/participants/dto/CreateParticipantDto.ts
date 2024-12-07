@@ -1,4 +1,4 @@
 export class CreateParticipantDto {
-    roomId: number;
     socketId: string;
+    name: string;
 }

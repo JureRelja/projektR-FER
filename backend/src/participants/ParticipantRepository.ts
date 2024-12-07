@@ -19,9 +19,10 @@ export class ParticipantRepository {
         return participants;
     }
 
-    public async createParticipant(roomUUID: string, socketId: string): Promise<Participant> {
+    public async createParticipant(name: string, socketId: string, roomUUID: string): Promise<Participant> {
         const newParticipant: Participant = await db.participant.create({
             data: {
+                name: name,
                 role: Role.PARTICIPANT,
                 socketId: socketId,
                 room: {

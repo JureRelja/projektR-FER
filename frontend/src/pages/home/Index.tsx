@@ -55,7 +55,7 @@ function App() {
         setLoading(true);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}}`, {
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${roomCode}`, {
                 method: "POST",
                 body: JSON.stringify({ socketId: webSocketsSignalling.getUserId(), name: name }),
                 headers: {

@@ -19,8 +19,14 @@ export class WebSocketSignalling implements Signalling {
         return this.socket.id as string;
     }
 
-    emitMessage(message: string, roomUUID: string): void {
-        this.socket.emit("message", { message: message, roomUUID: roomUUID });
+    emitMessage(message: string, name: string, roomUUID: string): void {
+        this.socket.emit("message", { message: message, name: name, roomUUID: roomUUID });
+    }
+
+    listenForMessage(): void {
+        this.socket.on("message", (message: { message: string; name: string; socketId: string }) => {
+            console.log(message);
+        });
     }
 
     emitIceCandidate(data: { iceCandidate: RTCIceCandidate }): void {

@@ -3,7 +3,9 @@ export interface Signalling {
 
     getUserId(): string;
 
-    emitMessage(message: string, roomUUID: string): void;
+    emitMessage(message: string, name: string, roomUUID: string): void;
+
+    listenForMessage(): void;
 
     emitAnswer(answer: RTCSessionDescriptionInit, roomUUID: string): void;
 

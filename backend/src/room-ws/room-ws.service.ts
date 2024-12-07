@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Socket } from "socket.io";
+import { MessageDto } from "./dto/MessageDto";
 
 @Injectable()
 export class RoomWsService {
@@ -26,8 +27,8 @@ export class RoomWsService {
         answerer.broadcast.to(roomUUID).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
     }
 
-    sendMessage(message: { message: string; name: string; roomUUID: string }, client: Socket): void {
+    sendMessage(message: MessageDto, client: Socket): void {
         console.log("emitting message");
-        client.broadcast.to(message.roomUUID).emit("message", { message: message.message, name: message.name, socketId: client.id, id: Date.now() });
+        client.broadcast.to(message.roomUUID).emit("message", message);
     }
 }

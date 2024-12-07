@@ -270,7 +270,13 @@ export default function Index() {
     const [messages, setMessages] = useState<Message[]>([]);
 
     const sendMessageHandler = () => {
-        const messageForSending: Message = { id: Date.now(), message: message, name: thisParticipant?.name as string, socketId: thisParticipant?.socketId as string };
+        const messageForSending: Message = {
+            id: Date.now(),
+            message: message,
+            name: thisParticipant?.name as string,
+            socketId: thisParticipant?.socketId as string,
+            roomUUID: params.id as string,
+        };
         webSocketsSignalling.emitMessage(messageForSending);
         setMessages([...messages, messageForSending]);
         setMessage("");

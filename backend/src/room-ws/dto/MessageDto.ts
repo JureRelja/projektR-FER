@@ -1,7 +1,7 @@
-export type Message = {
+export class MessageDto {
     id: number;
     message: string;
-    name: string;
     socketId: string;
+    name: string;
     roomUUID: string;
-};
+}

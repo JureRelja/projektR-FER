@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Participant } from "../../types/Participant";
 import { WebRTC } from "../../WebRTC";
@@ -179,6 +179,7 @@ const messages = [
 ];
 
 export default function Index() {
+    const navigate = useNavigate();
     const params = useParams<{ id: string }>();
     const [thisParticipant, setThisParticipant] = useState<Participant>();
     const thisParticipantVideo = useRef<HTMLVideoElement>(null);
@@ -187,6 +188,10 @@ export default function Index() {
     const remoteParticipantVideo = useRef<HTMLVideoElement>(null);
 
     useEffect(() => {
+        if (!params.id) {
+            navigate("/");
+        }
+
         const fetchParticipantData = async () => {
             const thisParticipant = await fetch(`${import.meta.env.VITE_BACKEND_URL}/participants/${params.id}`);
 
@@ -261,7 +266,8 @@ export default function Index() {
     const [message, setMessage] = useState("");
 
     const sendMessageHandler = () => {
-        console.log("Message sent");
+        webSocketsSignalling.emitMessage(message, params.id as string);
+        setMessage("");
     };
 
     return (
@@ -284,6 +290,7 @@ export default function Index() {
                 </div>
             </div>
 
+            {/* Chat */}
             <div className="flex flex-col w-[400px] h-full py-2 border-2 border-gray-200">
                 <div className="h-[500px] flex flex-col gap-2 overflow-y-auto px-2">
                     {messages.map((message) => {

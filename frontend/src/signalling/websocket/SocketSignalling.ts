@@ -1,5 +1,6 @@
 import { Socket } from "socket.io-client";
 import { Signalling } from "../Signalling";
+import { Message } from "../../types/Message";
 
 export class WebSocketSignalling implements Signalling {
     private socket: Socket;
@@ -24,7 +25,7 @@ export class WebSocketSignalling implements Signalling {
     }
 
     listenForMessage(): void {
-        this.socket.on("message", (message: { message: string; name: string; socketId: string }) => {
+        this.socket.on("message", (message: Message) => {
             console.log(message);
         });
     }

@@ -266,13 +266,13 @@ export default function Index() {
         };
     }, []);
 
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState<string>("");
     const [messages, setMessages] = useState<Message[]>([]);
 
     const sendMessageHandler = () => {
-        webSocketsSignalling.emitMessage(message, thisParticipant?.name as string, params.id as string);
-
-        setMessages([...messages, { id: Date.now(), message: message, name: thisParticipant?.name as string, socketId: thisParticipant?.socketId as string }]);
+        const messageForSending: Message = { id: Date.now(), message: message, name: thisParticipant?.name as string, socketId: thisParticipant?.socketId as string };
+        webSocketsSignalling.emitMessage(messageForSending);
+        setMessages([...messages, messageForSending]);
         setMessage("");
     };
 
@@ -313,7 +313,13 @@ export default function Index() {
                     })}
                 </div>
                 <div className="flex justify-between gap-2 items-center p-2 border-t-2 border-gray-200">
-                    <input className="border-2 px-3 py-[6px] rounded-md border-gray-400 w-full" type="text" placeholder="Poruka..." value={message} />
+                    <input
+                        className="border-2 px-3 py-[6px] rounded-md border-gray-400 w-full"
+                        type="text"
+                        placeholder="Poruka..."
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                    />
                     <Button label="Send" onClick={sendMessageHandler} />
                 </div>
             </div>

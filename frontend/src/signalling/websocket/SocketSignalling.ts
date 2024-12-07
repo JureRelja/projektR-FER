@@ -20,8 +20,8 @@ export class WebSocketSignalling implements Signalling {
         return this.socket.id as string;
     }
 
-    emitMessage(message: string, name: string, roomUUID: string): void {
-        this.socket.emit("message", { message: message, name: name, roomUUID: roomUUID });
+    emitMessage(message: Message): void {
+        this.socket.emit("message", message);
     }
 
     listenForMessage(): void {

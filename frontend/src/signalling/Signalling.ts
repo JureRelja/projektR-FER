@@ -1,9 +1,11 @@
+import { Message } from "../types/Message";
+
 export interface Signalling {
     joinRoom(roomUUID: string): void;
 
     getUserId(): string;
 
-    emitMessage(message: string, name: string, roomUUID: string): void;
+    emitMessage(message: Message): void;
 
     listenForMessage(): void;
 

@@ -305,14 +305,14 @@ export default function Index() {
                 <div className="flex gap-2">
                     {thisParticipantVideo && (
                         <div className="h-full w-full">
-                            <video autoPlay={true} controls={false} ref={thisParticipantVideo} />
+                            <video autoPlay={true} controls={false} ref={thisParticipantVideo} width="375px" height="200px" />
                             {thisParticipant && <p className="text-center">{thisParticipant.name}</p>}
                         </div>
                     )}
 
                     {remoteParticipantVideo && (
                         <div className="h-full w-full">
-                            <video autoPlay={true} controls={false} ref={remoteParticipantVideo} />
+                            <video autoPlay={true} controls={false} ref={remoteParticipantVideo} width="375px" height="200px" />
                             {remoteParticipant && <p className="text-center">{remoteParticipant.name}</p>}
                         </div>
                     )}
@@ -320,7 +320,7 @@ export default function Index() {
             </div>
 
             {/* Chat */}
-            <div className="flex flex-col w-[450px] h-full py-2 border-2 border-gray-200">
+            <div className="flex flex-col w-[400px] h-full py-2 border-2 border-gray-200">
                 <div className="h-[500px] flex flex-col gap-2 overflow-y-auto px-2">
                     {messages.map((message) => {
                         return (

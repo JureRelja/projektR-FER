@@ -17,170 +17,6 @@ const startSignallingServer = (fetchParticipantData: () => Promise<void>, handle
     webSocketsSignalling.listenForMessage(handleNewMessage);
 };
 
-const messages_test = [
-    {
-        id: 1,
-        message: "Hello",
-        senderId: "1",
-    },
-    {
-        id: 2,
-        message: "Hi",
-        senderId: "2",
-    },
-    {
-        id: 3,
-        message: "How are you?",
-        senderId: "1",
-    },
-    {
-        id: 4,
-        message: "I'm good",
-        senderId: "2",
-    },
-    {
-        id: 5,
-        message: "How about you?",
-        senderId: "2",
-    },
-    {
-        id: 6,
-        message: "I'm good too",
-        senderId: "1",
-    },
-    {
-        id: 7,
-        message: "That's great",
-        senderId: "2",
-    },
-    {
-        id: 8,
-        message: "Yeah",
-        senderId: "1",
-    },
-    {
-        id: 9,
-        message: "I have to go now",
-        senderId: "1",
-    },
-    {
-        id: 10,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 11,
-        message: "Bye",
-        senderId: "2",
-    },
-
-    {
-        id: 12,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 13,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 14,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 15,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 16,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 17,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 18,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 19,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 20,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 21,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 22,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 23,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 24,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 25,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 26,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 27,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 28,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 29,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 30,
-        message: "Bye",
-        senderId: "1",
-    },
-    {
-        id: 31,
-        message: "Bye",
-        senderId: "2",
-    },
-    {
-        id: 32,
-        message: "Bye",
-        senderId: "1",
-    },
-];
-
 export default function Index() {
     const navigate = useNavigate();
     const params = useParams<{ id: string }>();
@@ -276,7 +112,7 @@ export default function Index() {
                 const offer = await webRTC.createAndSendOffer(thisParticipantVideo, remoteParticipantVideo);
 
                 if (offer?.sdp && offer.type) {
-                    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${params.id}`, {
+                    await fetch(`${import.meta.env.VITE_BACKEND_URL}/rooms/${params.id}`, {
                         method: "PATCH",
                         body: JSON.stringify({
                             sdpOffer: offer.sdp,
@@ -286,8 +122,6 @@ export default function Index() {
                             "Content-type": "application/json",
                         },
                     });
-
-                    const data: Room[] = await response.json();
                 }
             }
         };

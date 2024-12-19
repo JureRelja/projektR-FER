@@ -23,6 +23,10 @@ export class WebRTC {
         return this.peerConnection;
     }
 
+    getStatus(): string {
+        return this.status;
+    }
+
     private async getUserMedia(): Promise<MediaStream | undefined> {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -72,7 +76,7 @@ export class WebRTC {
         // Listen for remote ICE candidates and add them to the local RTCPeerConnection
         this.signalling.listenForIceCandidate(this.peerConnection);
 
-        this.peerConnection.addEventListener("connectionstatechange", (event) => {
+        this.peerConnection.addEventListener("connectionstatechange", () => {
             if (this.peerConnection.connectionState === "connected") {
                 this.status = "Connected";
             }

@@ -63,11 +63,11 @@ function App() {
                 },
             });
 
-            const joinnedRoom: Room | null = await response.json();
+            if (response.ok) {
+                webSocketsSignalling.joinRoom(roomCode);
 
-            webSocketsSignalling.joinRoom(roomCode);
-
-            navigate(`/room/${roomCode}`);
+                navigate(`/room/${roomCode}`);
+            }
         } catch (error) {
             console.log(error);
             alert("U ovom pozivu se već nalazi dvoje sudionika.");

@@ -8,9 +8,7 @@
         "build": "tsc -b && vite build",
         "lint": "eslint .",
         "preview": "vite preview",
-        "start": "prisma generate && prisma migrate deploy",
-        "serve": "serve -s dist",
-        "prod": "npm run start && npm run serve"
+        "prod": "serve -s dist"
     },
     "dependencies": {
         "dotenv": "^16.4.5",

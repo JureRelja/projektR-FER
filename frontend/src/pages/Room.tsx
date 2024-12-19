@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { Participant } from "../../types/Participant";
-import { WebRTC } from "../../WebRTC";
-import { webSocketsSignalling } from "../Home";
-import { Room } from "../../types/Room";
-import Button from "../../components/Button";
-import { Message } from "../../types/Message";
+import { Participant } from "../types/Participant";
+import { WebRTC } from "../WebRTC";
+import { webSocketsSignalling } from "./Home";
+import { Room } from "../types/Room";
+import Button from "../components/Button";
+import { Message } from "../types/Message";
 
 const webRTC = new WebRTC(webSocketsSignalling);
 

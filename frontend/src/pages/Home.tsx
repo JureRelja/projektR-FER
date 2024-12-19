@@ -1,11 +1,11 @@
 import { useState } from "react";
-import Button from "../../components/Button";
-import Divider from "../../components/Divider";
-import { socket } from "../../signalling/websocket/socket";
+import Button from "../components/Button";
+import Divider from "../components/Divider";
+import { socket } from "../signalling/websocket/socket";
 import { useNavigate } from "react-router-dom";
-import { Signalling } from "../../signalling/Signalling";
-import { WebSocketSignalling } from "../../signalling/websocket/SocketSignalling";
-import { Room } from "../../types/Room";
+import { Signalling } from "../signalling/Signalling";
+import { WebSocketSignalling } from "../signalling/websocket/SocketSignalling";
+import { Room } from "../types/Room";
 import { MoonLoader } from "react-spinners";
 
 export const webSocketsSignalling: Signalling = new WebSocketSignalling(socket);

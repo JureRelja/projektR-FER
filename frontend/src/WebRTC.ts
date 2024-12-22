@@ -14,6 +14,7 @@ export class WebRTC {
 
     private remoteParticipant: MediaStream = new MediaStream();
     private status: "Connected" | "Not connected " = "Not connected ";
+    private connected: boolean = false;
 
     constructor(signalling: Signalling) {
         this.signalling = signalling;
@@ -68,7 +69,7 @@ export class WebRTC {
 
         // Listen for local ICE candidates on the local RTCPeerConnection
         this.peerConnection.addEventListener("icecandidate", (event) => {
-            if (event.candidate) {
+            if (event.candidate && this.connected) {
                 console.log("Sending ICE candidate to other peer", event.candidate);
                 this.signalling.emitIceCandidate({ iceCandidate: event.candidate });
             }
@@ -109,6 +110,8 @@ export class WebRTC {
 
         const answer = await this.peerConnection.createAnswer();
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
+
+        this.connected = true;
 
         return answer;
     }

@@ -88,6 +88,7 @@ export class WebRTC {
                 this.iceCandidates.push(event.candidate);
                 // console.log("Sending ICE candidate to other peer", event.candidate);
                 if (sendIce) {
+                    console.log("Answerer sending ICE candidate to other peer", event.candidate);
                     this.signalling.emitIceCandidate({ iceCandidate: event.candidate });
                 }
             }

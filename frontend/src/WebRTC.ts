@@ -87,9 +87,9 @@ export class WebRTC {
             if (event.candidate) {
                 this.iceCandidates.push(event.candidate);
                 // console.log("Sending ICE candidate to other peer", event.candidate);
-                if (sendIce) {
-                    this.signalling.emitIceCandidate({ iceCandidate: event.candidate });
-                }
+                // if (sendIce) {
+                //     this.signalling.emitIceCandidate({ iceCandidate: event.candidate });
+                // }
             }
         });
 
@@ -122,12 +122,12 @@ export class WebRTC {
         sdp: string,
         sdpType: RTCSdpType,
     ): Promise<RTCSessionDescriptionInit | null> {
-        await this.createConnection(thisParticipantVideo, remoteParticipantVideo, true);
+        const answer = await this.peerConnection.createAnswer();
+        await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
 
         await this.peerConnection.setRemoteDescription(new RTCSessionDescription({ sdp: sdp, type: sdpType }));
 
-        const answer = await this.peerConnection.createAnswer();
-        await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
+        await this.createConnection(thisParticipantVideo, remoteParticipantVideo, true);
 
         return answer;
     }

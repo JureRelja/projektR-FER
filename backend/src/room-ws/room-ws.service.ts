@@ -7,7 +7,7 @@ import { ConnectedSocket } from "@nestjs/websockets";
 export class RoomWsService {
     public recieveIceCandidate(candidate: { iceCandidate: RTCIceCandidate }, @ConnectedSocket() client: Socket): void {
         const rooms: string[] = Array.from(client.rooms);
-        console.log("emitting ice candidate");
+        console.log("emitting ice candidate", rooms, client.id);
         client.broadcast.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
 
         // server.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });

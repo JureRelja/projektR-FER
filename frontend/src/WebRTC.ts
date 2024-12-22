@@ -70,7 +70,7 @@ export class WebRTC {
         // Listen for local ICE candidates on the local RTCPeerConnection
         this.peerConnection.addEventListener("icecandidate", (event) => {
             if (event.candidate) {
-                console.log("Sending ICE candidate to other peer", event.candidate);
+                // console.log("Sending ICE candidate to other peer", event.candidate);
                 this.iceCandidates.push(event.candidate);
             }
         });
@@ -81,10 +81,6 @@ export class WebRTC {
         this.peerConnection.addEventListener("connectionstatechange", () => {
             if (this.peerConnection.connectionState === "connected") {
                 this.status = "Connected";
-                console.log("Connected");
-                this.iceCandidates.forEach((candidate) => {
-                    this.signalling.emitIceCandidate({ iceCandidate: candidate });
-                });
             }
         });
     }
@@ -114,6 +110,11 @@ export class WebRTC {
 
         const answer = await this.peerConnection.createAnswer();
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
+
+        this.iceCandidates.forEach((candidate) => {
+            console.log("Sending ICE candidate to other peer", candidate);
+            this.signalling.emitIceCandidate({ iceCandidate: candidate });
+        });
 
         return answer;
     }

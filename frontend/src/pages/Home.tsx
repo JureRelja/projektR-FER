@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../components/Button";
 import Divider from "../components/Divider";
 import { socket } from "../signalling/websocket/socket";
@@ -74,6 +74,14 @@ function App() {
         }
     };
     //Join existing room - end
+
+    useEffect(() => {
+        let params = new URLSearchParams(window.location.search);
+
+        if (params.has("roomId")) {
+            setRoomCode(params.get("roomId") as string);
+        }
+    }, []);
 
     return (
         <div className="flex flex-col gap-12 w-full">

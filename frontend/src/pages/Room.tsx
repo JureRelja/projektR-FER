@@ -205,11 +205,11 @@ export default function Index() {
 
             {/* Invite */}
             <div className="flex items-center gap-2 w-full justify-center">
-                <input value={`https://projektr-fer-frontend.onrender.com/room/${params.id}`} disabled className="border-gray-400 border-2 bg-white p-2 " />
+                <input value={`https://projektr-fer-frontend.onrender.com/?roomId=${params.id}`} disabled className="border-gray-400 border-2 bg-white p-2 " />
                 <Button
                     label={"Kopiraj link"}
                     onClick={function (event: React.MouseEvent<HTMLButtonElement>): void {
-                        navigator.clipboard.writeText(`https://projektr-fer-frontend.onrender.com/room/${params.id}`);
+                        navigator.clipboard.writeText(`https://projektr-fer-frontend.onrender.com/?roomId=${params.id}`);
                     }}
                 />
             </div>

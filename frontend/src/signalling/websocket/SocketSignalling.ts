@@ -49,12 +49,17 @@ export class WebSocketSignalling implements Signalling {
         this.socket.emit("makeAnswer", { roomUUID: roomUUID, answer: answer });
     }
 
-    answerMade(peerConnection: RTCPeerConnection, fetchParticipantData: () => Promise<void>): void {
+    answerMade(peerConnection: RTCPeerConnection, fetchParticipantData: () => Promise<void>, iceCandidates: RTCIceCandidate[]): void {
         this.socket.on("answerMade", async (data) => {
             if (!peerConnection.remoteDescription) {
                 console.log("connecting " + data.caleeSocketId + " and " + this.socket.id);
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
                 fetchParticipantData();
+
+                iceCandidates.forEach((candidate) => {
+                    console.log("Sending ICE candidate to other peer", candidate);
+                    this.emitIceCandidate({ iceCandidate: candidate });
+                });
             }
         });
     }

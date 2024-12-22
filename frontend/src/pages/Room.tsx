@@ -10,7 +10,7 @@ import { Message } from "../types/Message";
 const webRTC = new WebRTC(webSocketsSignalling);
 
 const startSignallingServer = (fetchParticipantData: () => Promise<void>, handleNewMessage: (message: Message) => void) => {
-    webSocketsSignalling.answerMade(webRTC.getPeerConnection(), fetchParticipantData);
+    webSocketsSignalling.answerMade(webRTC.getPeerConnection(), fetchParticipantData, webRTC.getIceCandidates());
 
     webSocketsSignalling.listenForIceCandidate(webRTC.getPeerConnection());
 

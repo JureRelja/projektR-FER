@@ -11,7 +11,7 @@ export interface Signalling {
 
     emitAnswer(answer: RTCSessionDescriptionInit, roomUUID: string): void;
 
-    answerMade(peerConnection: RTCPeerConnection, fetchParticipantData: () => Promise<void>): void;
+    answerMade(peerConnection: RTCPeerConnection, fetchParticipantData: () => Promise<void>, iceCandidates: RTCIceCandidate[]): void;
 
     removeAnswerMade(): void;
 

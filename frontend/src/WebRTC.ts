@@ -28,6 +28,10 @@ export class WebRTC {
         return this.status;
     }
 
+    getIceCandidates(): RTCIceCandidate[] {
+        return this.iceCandidates;
+    }
+
     private async getUserMedia(): Promise<MediaStream | undefined> {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
@@ -110,11 +114,6 @@ export class WebRTC {
 
         const answer = await this.peerConnection.createAnswer();
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
-
-        this.iceCandidates.forEach((candidate) => {
-            console.log("Sending ICE candidate to other peer", candidate);
-            this.signalling.emitIceCandidate({ iceCandidate: candidate });
-        });
 
         return answer;
     }

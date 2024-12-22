@@ -1,13 +1,14 @@
 import { Injectable } from "@nestjs/common";
-import { Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { MessageDto } from "./dto/MessageDto";
+import { ConnectedSocket } from "@nestjs/websockets";
 
 @Injectable()
 export class RoomWsService {
-    public recieveIceCandidate(candidate: { iceCandidate: RTCIceCandidate }, client: Socket): void {
+    public recieveIceCandidate(candidate: { iceCandidate: RTCIceCandidate }, @ConnectedSocket() client: Socket, server: Server): void {
         const rooms: string[] = Array.from(client.rooms);
         console.log("emitting ice candidate");
-        client.broadcast.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
+        server.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
 
         // server.to(rooms).emit("iceCandidate", { iceCandidate: candidate.iceCandidate });
     }
@@ -24,11 +25,11 @@ export class RoomWsService {
 
     emitCallAnswer(answer: RTCSessionDescriptionInit, answerer: Socket, roomUUID: string): void {
         console.log("emitting answerMade");
-        answerer.broadcast.to(roomUUID).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
+        answerer.to(roomUUID).emit("answerMade", { caleeSocketId: answerer.id, answer: answer });
     }
 
-    sendMessage(message: MessageDto, client: Socket): void {
+    sendMessage(message: MessageDto, client: Socket, server: Server): void {
         console.log("emitting message");
-        client.broadcast.to(message.roomUUID).emit("message", message);
+        server.to(message.roomUUID).emit("message", message);
     }
 }

@@ -2,9 +2,16 @@ import { Signalling } from "./signalling/Signalling";
 
 const servers = {
     iceServers: [
-        {
-            urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"],
-        },
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun.l.google.com:5349" },
+        { urls: "stun:stun1.l.google.com:3478" },
+        { urls: "stun:stun1.l.google.com:5349" },
+        { urls: "stun:stun2.l.google.com:19302" },
+        { urls: "stun:stun2.l.google.com:5349" },
+        { urls: "stun:stun3.l.google.com:3478" },
+        { urls: "stun:stun3.l.google.com:5349" },
+        { urls: "stun:stun4.l.google.com:19302" },
+        { urls: "stun:stun4.l.google.com:5349" },
     ],
 };
 
@@ -44,7 +51,7 @@ export class WebRTC {
     private async createConnection(
         thisParticipantVideo: React.RefObject<HTMLVideoElement>,
         remoteParticipantVideo: React.RefObject<HTMLVideoElement>,
-        sendIce: boolean = false,
+        sendIce: boolean,
     ): Promise<void> {
         const stream = await this.getUserMedia();
 
@@ -100,7 +107,7 @@ export class WebRTC {
         thisParticipantVideo: React.RefObject<HTMLVideoElement>,
         remoteParticipantVideo: React.RefObject<HTMLVideoElement>,
     ): Promise<RTCSessionDescriptionInit | null> {
-        await this.createConnection(thisParticipantVideo, remoteParticipantVideo);
+        await this.createConnection(thisParticipantVideo, remoteParticipantVideo, false);
 
         const offer: RTCSessionDescriptionInit = await this.peerConnection.createOffer();
 

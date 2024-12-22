@@ -31,6 +31,7 @@ export class WebSocketSignalling implements Signalling {
     }
 
     emitIceCandidate(data: { iceCandidate: RTCIceCandidate }): void {
+        console.log("Sending ICE candidate to other peer", data);
         this.socket.emit("iceCandidate", data);
     }
 
@@ -57,7 +58,6 @@ export class WebSocketSignalling implements Signalling {
                 fetchParticipantData();
 
                 iceCandidates.forEach((candidate) => {
-                    console.log("Sending ICE candidate to other peer", candidate);
                     this.emitIceCandidate({ iceCandidate: candidate });
                 });
             }

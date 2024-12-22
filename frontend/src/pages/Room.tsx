@@ -208,7 +208,7 @@ export default function Index() {
                 <input value={`https://projektr-fer-frontend.onrender.com/?roomId=${params.id}`} disabled className="border-gray-400 border-2 bg-white p-2 " />
                 <Button
                     label={"Kopiraj link"}
-                    onClick={function (event: React.MouseEvent<HTMLButtonElement>): void {
+                    onClick={() => {
                         navigator.clipboard.writeText(`https://projektr-fer-frontend.onrender.com/?roomId=${params.id}`);
                     }}
                 />

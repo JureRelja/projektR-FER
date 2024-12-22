@@ -41,7 +41,11 @@ export class WebRTC {
         }
     }
 
-    private async createConnection(thisParticipantVideo: React.RefObject<HTMLVideoElement>, remoteParticipantVideo: React.RefObject<HTMLVideoElement>): Promise<void> {
+    private async createConnection(
+        thisParticipantVideo: React.RefObject<HTMLVideoElement>,
+        remoteParticipantVideo: React.RefObject<HTMLVideoElement>,
+        sendIce: boolean = false,
+    ): Promise<void> {
         const stream = await this.getUserMedia();
 
         if (!stream) {
@@ -74,8 +78,11 @@ export class WebRTC {
         // Listen for local ICE candidates on the local RTCPeerConnection
         this.peerConnection.addEventListener("icecandidate", (event) => {
             if (event.candidate) {
-                // console.log("Sending ICE candidate to other peer", event.candidate);
                 this.iceCandidates.push(event.candidate);
+                // console.log("Sending ICE candidate to other peer", event.candidate);
+                if (sendIce) {
+                    this.signalling.emitIceCandidate({ iceCandidate: event.candidate });
+                }
             }
         });
 
@@ -108,7 +115,7 @@ export class WebRTC {
         sdp: string,
         sdpType: RTCSdpType,
     ): Promise<RTCSessionDescriptionInit | null> {
-        await this.createConnection(thisParticipantVideo, remoteParticipantVideo);
+        await this.createConnection(thisParticipantVideo, remoteParticipantVideo, true);
 
         await this.peerConnection.setRemoteDescription(new RTCSessionDescription({ sdp: sdp, type: sdpType }));
 

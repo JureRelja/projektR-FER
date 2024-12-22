@@ -36,6 +36,7 @@ export class WebSocketSignalling implements Signalling {
 
     listenForIceCandidate(peerConnection: RTCPeerConnection): void {
         this.socket.on("iceCandidate", async (data) => {
+            console.log("Received ICE candidate from other peer", data.iceCandidate);
             try {
                 await peerConnection.addIceCandidate(new RTCIceCandidate(data.iceCandidate));
             } catch (e) {

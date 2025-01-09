@@ -31,14 +31,14 @@ export class WebSocketSignalling implements Signalling {
     }
 
     emitIceCandidate(data: { iceCandidate: RTCIceCandidate }): void {
-        console.log("Sending ICE candidate to other peer", data);
+        console.log("Answerer sending ICE candidate to other peer", data);
         this.socket.emit("iceCandidate", data);
     }
 
     listenForIceCandidate(peerConnection: RTCPeerConnection): void {
         this.socket.on("iceCandidate", async (data) => {
-            console.log("Received ICE candidate from other peer", data.iceCandidate);
             try {
+                console.log("Received ICE candidate from other peer", data.iceCandidate);
                 await peerConnection.addIceCandidate(new RTCIceCandidate(data.iceCandidate));
             } catch (e) {
                 console.error("Error adding received ice candidate", e);

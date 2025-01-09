@@ -110,11 +110,10 @@ export class WebRTC {
         this.peerConnection.addEventListener("icecandidate", (event) => {
             if (event.candidate) {
                 this.iceCandidates.push(event.candidate);
-                console.log(sendIce, event.candidate);
+                // console.log(sendIce, event.candidate);
 
                 // console.log("Sending ICE candidate to other peer", event.candidate);
                 if (sendIce) {
-                    console.log("Answerer sending ICE candidate to other peer", event.candidate);
                     this.signalling.emitIceCandidate({ iceCandidate: event.candidate });
                 }
             }

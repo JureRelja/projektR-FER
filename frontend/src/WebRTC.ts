@@ -106,8 +106,12 @@ export class WebRTC {
             }
         };
 
+        // Listen for remote ICE candidates and add them to the local RTCPeerConnection
+        this.signalling.listenForIceCandidate(this.peerConnection);
+
         // Listen for local ICE candidates on the local RTCPeerConnection
         this.peerConnection.addEventListener("icecandidate", (event) => {
+            console.log(event);
             if (event.candidate) {
                 this.iceCandidates.push(event.candidate);
                 console.log(sendIce, event.candidate);
@@ -119,9 +123,6 @@ export class WebRTC {
                 }
             }
         });
-
-        // Listen for remote ICE candidates and add them to the local RTCPeerConnection
-        this.signalling.listenForIceCandidate(this.peerConnection);
     }
 
     public async createAndSendOffer(

@@ -56,7 +56,7 @@ export class WebSocketSignalling implements Signalling {
                 console.log("connecting " + data.caleeSocketId + " and " + this.socket.id);
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
                 fetchParticipantData();
-                console.log(iceCandidates);
+
                 iceCandidates.forEach((candidate) => {
                     console.log("Emiting sandidate to the callee", candidate);
                     this.emitIceCandidate({ iceCandidate: candidate });

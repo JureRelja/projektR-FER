@@ -108,7 +108,6 @@ export class WebRTC {
 
         // Listen for local ICE candidates on the local RTCPeerConnection
         this.peerConnection.addEventListener("icecandidate", (event) => {
-            console.log(event);
             if (event.candidate) {
                 this.iceCandidates.push(event.candidate);
                 console.log(sendIce, event.candidate);
@@ -129,10 +128,11 @@ export class WebRTC {
         thisParticipantVideo: React.RefObject<HTMLVideoElement>,
         remoteParticipantVideo: React.RefObject<HTMLVideoElement>,
     ): Promise<RTCSessionDescriptionInit | null> {
+        await this.createConnection(thisParticipantVideo, remoteParticipantVideo, false);
+
         const offer: RTCSessionDescriptionInit = await this.peerConnection.createOffer();
 
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(offer));
-        await this.createConnection(thisParticipantVideo, remoteParticipantVideo, false);
 
         return offer;
     }
@@ -143,12 +143,12 @@ export class WebRTC {
         sdp: string,
         sdpType: RTCSdpType,
     ): Promise<RTCSessionDescriptionInit | null> {
+        await this.createConnection(thisParticipantVideo, remoteParticipantVideo, true);
+
         await this.peerConnection.setRemoteDescription(new RTCSessionDescription({ sdp: sdp, type: sdpType }));
 
         const answer = await this.peerConnection.createAnswer();
         await this.peerConnection.setLocalDescription(new RTCSessionDescription(answer));
-
-        await this.createConnection(thisParticipantVideo, remoteParticipantVideo, true);
 
         return answer;
     }

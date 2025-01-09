@@ -58,7 +58,7 @@ export class WebSocketSignalling implements Signalling {
                 fetchParticipantData();
 
                 iceCandidates.forEach((candidate) => {
-                    console.log("Emiting sandidate to the callee", candidate);
+                    console.log("Emiting candidate to the callee", candidate);
                     this.emitIceCandidate({ iceCandidate: candidate });
                 });
             }

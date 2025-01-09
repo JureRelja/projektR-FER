@@ -65,24 +65,24 @@ export default function Index() {
             navigate("/");
         }
 
-        const getTurnServers = async () => {
-            const apiKeyRequest = await fetch("https://video-chat-app-fer.metered.live/api/v1/turn/credential?secretKey=9i1OJ4kpadeLajb8sf-2oUYqNpJUjgy7DZkIQwsBP6e3rEKd", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    expiryInSeconds: 14400,
-                    label: "user-1",
-                }),
-            });
+        // const getTurnServers = async () => {
+        //     const apiKeyRequest = await fetch("https://video-chat-app-fer.metered.live/api/v1/turn/credential?secretKey=9i1OJ4kpadeLajb8sf-2oUYqNpJUjgy7DZkIQwsBP6e3rEKd", {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json",
+        //         },
+        //         body: JSON.stringify({
+        //             expiryInSeconds: 14400,
+        //             label: "user-1",
+        //         }),
+        //     });
 
-            const apiKeyData = await apiKeyRequest.json();
+        //     const apiKeyData = await apiKeyRequest.json();
 
-            const iceServerRequest = await fetch(`https://mla2.metered.live/api/v1/turn/credentials?apiKey=${apiKeyData.apiKey}`);
+        //     const iceServerRequest = await fetch(`https://mla2.metered.live/api/v1/turn/credentials?apiKey=${apiKeyData.apiKey}`);
 
-            const iceServers = await iceServerRequest.json();
-        };
+        //     const iceServers = await iceServerRequest.json();
+        // };
 
         const fetchParticipantData = async () => {
             const thisParticipant = await fetch(`${import.meta.env.VITE_BACKEND_URL}/participants/${params.id}`);

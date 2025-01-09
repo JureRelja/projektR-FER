@@ -12,7 +12,7 @@ const servers = {
         { urls: "stun:stun.voipbuster.com" },
         { urls: "stun:stun.voipstunt.com" },
         { urls: "stun:stun.xten.com" },
-        { urls: "relay1.expressturn.com:3478", username: "efKQFKTVZ46CD0JGNE", password: "CbUyVUAn6AAc595o" },
+        { url: "turn:relay1.expressturn.com:3478", username: "efKQFKTVZ46CD0JGNE", credential: "CbUyVUAn6AAc595o" },
     ],
 };
 

@@ -96,7 +96,7 @@ export class WebRTC {
 
         this.peerConnection.addEventListener("connectionstatechange", () => {
             if (this.peerConnection.connectionState === "connected") {
-                alert("Peers connected");
+                console.log("Peers connected");
             }
         });
 

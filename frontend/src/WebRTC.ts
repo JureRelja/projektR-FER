@@ -109,6 +109,7 @@ export class WebRTC {
         // Listen for local ICE candidates on the local RTCPeerConnection
         this.peerConnection.addEventListener("icecandidate", (event) => {
             if (event.candidate) {
+                console.log("collecting ice");
                 this.iceCandidates.push(event.candidate);
                 // console.log(sendIce, event.candidate);
 
@@ -116,6 +117,12 @@ export class WebRTC {
                 if (sendIce) {
                     this.signalling.emitIceCandidate({ iceCandidate: event.candidate });
                 }
+            }
+        });
+
+        this.peerConnection.addEventListener("connectionstatechange", (event) => {
+            if (this.peerConnection.connectionState === "connected") {
+                alert("Peers connected");
             }
         });
 
